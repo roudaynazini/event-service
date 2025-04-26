@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<VBox alignment="CENTER" spacing="20.0" xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.roudaynazini.MainViewController">
+    <padding>
+        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/>
+    </padding>
+
+    <Label text="Event Service Reservation Management" style="-fx-font-size: 24px;"/>
+    
+    <TableView fx:id="reservationTable" VBox.vgrow="ALWAYS">
+        <columns>
+            <TableColumn fx:id="idColumn" text="ID"/>
+            <TableColumn fx:id="nameColumn" text="Customer Name"/>
+            <TableColumn fx:id="dateColumn" text="Date"/>
+            <TableColumn fx:id="statusColumn" text="Status"/>
+        </columns>
+    </TableView>
+
+    <HBox spacing="10" alignment="CENTER">
+        <Button text="Add Reservation" onAction="#handleAddReservation"/>
+        <Button text="Edit Reservation" onAction="#handleEditReservation"/>
+        <Button text="Delete Reservation" onAction="#handleDeleteReservation"/>
+    </HBox>
+</VBox> 
