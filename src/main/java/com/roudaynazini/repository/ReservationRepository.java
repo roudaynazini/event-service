@@ -10,17 +10,17 @@ public interface ReservationRepository {
     Reservation save(Reservation reservation);
     
     // Read
-    Optional<Reservation> findById(int id);
+    Optional<Reservation> findById(Long id);
     List<Reservation> findAll();
     List<Reservation> findByClientName(String clientName);
     List<Reservation> findByEventDate(LocalDate eventDate);
     List<Reservation> findByStatus(String status);
     
     // Update
-    Reservation update(Reservation reservation);
+    void update(Reservation reservation);
     
     // Delete
-    void deleteById(int id);
+    void deleteById(Long id);
     
     // Search and Filter
     List<Reservation> findByDateRange(LocalDate startDate, LocalDate endDate);

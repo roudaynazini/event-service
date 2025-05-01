@@ -16,6 +16,12 @@ public class ReservationDialogController {
     private DatePicker eventDatePicker;
     @FXML
     private ComboBox<String> statusComboBox;
+    @FXML
+    private TextArea notesArea;
+    @FXML
+    private Button okButton;
+    @FXML
+    private Button cancelButton;
 
     private ReservationRepository reservationRepository;
     private Stage dialogStage;
@@ -38,11 +44,24 @@ public class ReservationDialogController {
 
     public void setReservation(Reservation reservation) {
         this.reservation = reservation;
-        
-        // Populate fields with reservation data
         clientNameField.setText(reservation.getClientName());
         eventDatePicker.setValue(reservation.getEventDate());
         statusComboBox.setValue(reservation.getStatus());
+        notesArea.setText(reservation.getNotes());
+    }
+
+    public void setViewOnly(boolean viewOnly) {
+        // Disable all fields in view mode
+        clientNameField.setEditable(!viewOnly);
+        eventDatePicker.setDisable(viewOnly);
+        statusComboBox.setDisable(viewOnly);
+        notesArea.setEditable(!viewOnly);
+        
+        // Hide action buttons in view mode
+        if (viewOnly) {
+            okButton.setVisible(false);
+            cancelButton.setText("Close");
+        }
     }
 
     public boolean isOkClicked() {
@@ -54,23 +73,19 @@ public class ReservationDialogController {
         if (isInputValid()) {
             if (reservation == null) {
                 reservation = new Reservation();
-                // Set creation date for new reservations
                 reservation.setCreatedAt(LocalDate.now());
             }
             
-            // Update reservation with form data
             reservation.setClientName(clientNameField.getText());
             reservation.setEventDate(eventDatePicker.getValue());
             reservation.setStatus(statusComboBox.getValue());
-            // Always update the updatedAt date
+            reservation.setNotes(notesArea.getText());
             reservation.setUpdatedAt(LocalDate.now());
-            
+
             try {
-                if (reservation.getId() == 0) {
-                    // New reservation
+                if (reservation.getId() == null) {
                     reservationRepository.save(reservation);
                 } else {
-                    // Existing reservation
                     reservationRepository.update(reservation);
                 }
                 okClicked = true;
@@ -117,5 +132,9 @@ public class ReservationDialogController {
         alert.setHeaderText(null);
         alert.setContentText(content);
         alert.showAndWait();
+    }
+
+    public Reservation getReservation() {
+        return reservation;
     }
 } 

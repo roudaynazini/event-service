@@ -3,43 +3,42 @@ package com.roudaynazini.model;
 import java.time.LocalDate;
 
 public class Contract {
-    private int id;
-    private int reservationId;
+    private Long id;
     private String contractNumber;
     private String contractType;
     private String status;
     private LocalDate startDate;
     private LocalDate endDate;
-    private LocalDate createdAt;
-    private LocalDate updatedAt;
+    private Long reservationId;
+    private Double totalAmount;
+    private String terms;
+    private String notes;
 
-    public Contract() {
-    }
+    // Default constructor
+    public Contract() {}
 
-    public Contract(int id, int reservationId, String contractNumber, String contractType, String status, LocalDate startDate, LocalDate endDate) {
+    // Constructor with all fields
+    public Contract(Long id, String contractNumber, String contractType, String status, LocalDate startDate, 
+                   LocalDate endDate, Long reservationId, Double totalAmount, String terms, String notes) {
         this.id = id;
-        this.reservationId = reservationId;
         this.contractNumber = contractNumber;
         this.contractType = contractType;
         this.status = status;
         this.startDate = startDate;
         this.endDate = endDate;
+        this.reservationId = reservationId;
+        this.totalAmount = totalAmount;
+        this.terms = terms;
+        this.notes = notes;
     }
 
-    public int getId() {
+    // Getters and Setters
+    public Long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Long id) {
         this.id = id;
-    }
-
-    public int getReservationId() {
-        return reservationId;
-    }
-
-    public void setReservationId(int reservationId) {
-        this.reservationId = reservationId;
     }
 
     public String getContractNumber() {
@@ -82,32 +81,51 @@ public class Contract {
         this.endDate = endDate;
     }
 
-    public LocalDate getCreatedAt() {
-        return createdAt;
+    public Long getReservationId() {
+        return reservationId;
     }
 
-    public void setCreatedAt(LocalDate createdAt) {
-        this.createdAt = createdAt;
+    public void setReservationId(Long reservationId) {
+        this.reservationId = reservationId;
     }
 
-    public LocalDate getUpdatedAt() {
-        return updatedAt;
+    public Double getTotalAmount() {
+        return totalAmount;
     }
 
-    public void setUpdatedAt(LocalDate updatedAt) {
-        this.updatedAt = updatedAt;
+    public void setTotalAmount(Double totalAmount) {
+        this.totalAmount = totalAmount;
+    }
+
+    public String getTerms() {
+        return terms;
+    }
+
+    public void setTerms(String terms) {
+        this.terms = terms;
+    }
+
+    public String getNotes() {
+        return notes;
+    }
+
+    public void setNotes(String notes) {
+        this.notes = notes;
     }
 
     @Override
     public String toString() {
         return "Contract{" +
                 "id=" + id +
-                ", reservationId=" + reservationId +
                 ", contractNumber='" + contractNumber + '\'' +
                 ", contractType='" + contractType + '\'' +
                 ", status='" + status + '\'' +
                 ", startDate=" + startDate +
                 ", endDate=" + endDate +
+                ", reservationId=" + reservationId +
+                ", totalAmount=" + totalAmount +
+                ", terms='" + terms + '\'' +
+                ", notes='" + notes + '\'' +
                 '}';
     }
 } 

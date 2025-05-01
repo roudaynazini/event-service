@@ -1,50 +1,51 @@
 package com.roudaynazini;
 
+import com.roudaynazini.config.DatabaseConfig;
+import com.roudaynazini.repository.ContractRepository;
+import com.roudaynazini.repository.MySQLUserRepository;
+import com.roudaynazini.repository.ReservationRepository;
+import com.roudaynazini.repository.UserRepository;
+import com.roudaynazini.repository.impl.ContractRepositoryImpl;
+import com.roudaynazini.repository.impl.ReservationRepositoryImpl;
+import com.roudaynazini.service.UserService;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import com.roudaynazini.repository.ReservationRepository;
-import com.roudaynazini.repository.ContractRepository;
-import com.roudaynazini.repository.impl.ReservationRepositoryImpl;
-import com.roudaynazini.repository.impl.ContractRepositoryImpl;
-import com.roudaynazini.config.DatabaseConfig;
-import com.roudaynazini.config.DatabaseInitializer;
-
-import java.io.IOException;
-import java.sql.Connection;
 
 public class EventServiceApp extends Application {
     @Override
-    public void start(Stage stage) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(EventServiceApp.class.getResource("main-view.fxml"));
-        Scene scene = new Scene(fxmlLoader.load());
+    public void start(Stage primaryStage) throws Exception {
+        // Test database connection first
+        DatabaseConfig.testConnection();
+        System.out.println("Database Connected Successfully");
+
+        // Initialize repositories
+        UserRepository userRepository = new MySQLUserRepository();
+        ReservationRepository reservationRepository = new ReservationRepositoryImpl();
+        ContractRepository contractRepository = new ContractRepositoryImpl();
+        UserService userService = new UserService(userRepository);
+
+        // Load main view
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("main-view.fxml"));
+        Parent root = loader.load();
         
-        // Get the controller and inject repositories
-        MainViewController controller = fxmlLoader.getController();
-        try {
-            // Get database connection
-            Connection connection = DatabaseConfig.getConnection();
-            
-            // Initialize database tables
-            DatabaseInitializer.initializeDatabase(connection);
-            
-            // Create repositories
-            ReservationRepository reservationRepository = new ReservationRepositoryImpl(connection);
-            ContractRepository contractRepository = new ContractRepositoryImpl(connection);
-            
-            // Set repositories in controller
-            controller.setRepositories(reservationRepository, contractRepository);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        // Get controller and set repositories and services
+        MainViewController controller = loader.getController();
+        controller.setUserService(userService);
+        controller.setRepositories(reservationRepository, contractRepository, userRepository);
+
+        // Set up and show the stage
+        primaryStage.setTitle("Event Service Application");
+        primaryStage.setScene(new Scene(root));
+        primaryStage.setMaximized(true);
         
-        stage.setTitle("Event Service Management");
-        stage.setScene(scene);
-        stage.show();
+        // Show the stage first
+        primaryStage.show();
     }
 
     public static void main(String[] args) {
-        launch();
+        launch(args);
     }
 } 

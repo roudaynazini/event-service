@@ -7,24 +7,38 @@
 <VBox xmlns="http://javafx.com/javafx"
       xmlns:fx="http://javafx.com/fxml"
       fx:controller="com.roudaynazini.ReservationDialogController"
-      spacing="10">
+      spacing="10"
+      style="-fx-background-color: #FFF0F5;">
     <padding>
-        <Insets top="10" right="10" bottom="10" left="10"/>
+        <Insets top="20" right="20" bottom="20" left="20"/>
     </padding>
 
-    <GridPane hgap="10" vgap="10">
-        <Label text="Client Name:" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
-        <TextField fx:id="clientNameField" GridPane.columnIndex="1" GridPane.rowIndex="0" GridPane.hgrow="ALWAYS"/>
-        
-        <Label text="Event Date:" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
-        <DatePicker fx:id="eventDatePicker" GridPane.columnIndex="1" GridPane.rowIndex="1" GridPane.hgrow="ALWAYS"/>
-        
-        <Label text="Status:" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
-        <ComboBox fx:id="statusComboBox" GridPane.columnIndex="1" GridPane.rowIndex="2" GridPane.hgrow="ALWAYS"/>
-    </GridPane>
+    <!-- Title -->
+    <Label text="Reservation Details" style="-fx-font-size: 18px; -fx-text-fill: #C71585; -fx-font-weight: bold;"/>
 
-    <HBox spacing="10" alignment="CENTER_RIGHT">
-        <Button text="Save" onAction="#handleOk" defaultButton="true"/>
-        <Button text="Cancel" onAction="#handleCancel" cancelButton="true"/>
-    </HBox>
+    <GridPane hgap="10" vgap="10" style="-fx-background-color: white; -fx-padding: 15; -fx-background-radius: 5; -fx-border-color: #9370DB; -fx-border-radius: 5;">
+        <Label text="Client Name:" GridPane.columnIndex="0" GridPane.rowIndex="0" style="-fx-text-fill: #C71585;"/>
+        <TextField fx:id="clientNameField" GridPane.columnIndex="1" GridPane.rowIndex="0" GridPane.hgrow="ALWAYS"
+                  style="-fx-background-color: #9370DB; -fx-text-fill: white;"/>
+        
+        <Label text="Event Date:" GridPane.columnIndex="0" GridPane.rowIndex="1" style="-fx-text-fill: #C71585;"/>
+        <DatePicker fx:id="eventDatePicker" GridPane.columnIndex="1" GridPane.rowIndex="1" GridPane.hgrow="ALWAYS"
+                   style="-fx-background-color: #9370DB; -fx-text-fill: #C71585;"/>
+        
+        <Label text="Status:" GridPane.columnIndex="0" GridPane.rowIndex="2" style="-fx-text-fill: #C71585;"/>
+        <ComboBox fx:id="statusComboBox" GridPane.columnIndex="1" GridPane.rowIndex="2" GridPane.hgrow="ALWAYS"
+                 style="-fx-background-color: #9370DB; -fx-text-fill: #C71585;"/>
+
+        <Label text="Notes:" GridPane.columnIndex="0" GridPane.rowIndex="3" style="-fx-text-fill: #C71585;"/>
+        <TextArea fx:id="notesArea" GridPane.columnIndex="1" GridPane.rowIndex="3" GridPane.hgrow="ALWAYS"
+                  style="-fx-background-color: #9370DB; -fx-text-fill: white;" wrapText="true"/>
+
+        <!-- Buttons -->
+        <HBox spacing="10" alignment="CENTER_RIGHT" GridPane.columnSpan="2" GridPane.rowIndex="4">
+            <Button fx:id="okButton" text="Save" onAction="#handleOk" 
+                    style="-fx-background-color: #D8BFD8; -fx-text-fill: #C71585; -fx-font-weight: bold;"/>
+            <Button fx:id="cancelButton" text="Cancel" onAction="#handleCancel" 
+                    style="-fx-background-color: #D8BFD8; -fx-text-fill: #C71585; -fx-font-weight: bold;"/>
+        </HBox>
+    </GridPane>
 </VBox> 

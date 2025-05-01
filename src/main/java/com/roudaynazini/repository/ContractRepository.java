@@ -10,9 +10,9 @@ public interface ContractRepository {
     Contract save(Contract contract);
     
     // Read
-    Optional<Contract> findById(int id);
+    Optional<Contract> findById(Long id);
     List<Contract> findAll();
-    List<Contract> findByReservationId(int reservationId);
+    List<Contract> findByReservationId(Long reservationId);
     List<Contract> findByContractNumber(String contractNumber);
     List<Contract> findByStatus(String status);
     
@@ -20,7 +20,7 @@ public interface ContractRepository {
     Contract update(Contract contract);
     
     // Delete
-    void deleteById(int id);
+    void deleteById(Long id);
     
     // Search and Filter
     List<Contract> findByDateRange(LocalDate startDate, LocalDate endDate);

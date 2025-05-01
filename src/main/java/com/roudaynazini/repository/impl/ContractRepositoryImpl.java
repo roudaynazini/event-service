@@ -2,38 +2,78 @@ package com.roudaynazini.repository.impl;
 
 import com.roudaynazini.model.Contract;
 import com.roudaynazini.repository.ContractRepository;
-
 import java.sql.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import com.roudaynazini.config.DatabaseConfig;
 
 public class ContractRepositoryImpl implements ContractRepository {
     private final Connection connection;
 
-    public ContractRepositoryImpl(Connection connection) {
-        this.connection = connection;
+    public ContractRepositoryImpl() {
+        try {
+            this.connection = DatabaseConfig.getConnection();
+            createTableIfNotExists();
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to initialize ContractRepository", e);
+        }
+    }
+
+    private void createTableIfNotExists() throws SQLException {
+        String sql = """
+            CREATE TABLE IF NOT EXISTS contracts (
+                id BIGINT PRIMARY KEY AUTO_INCREMENT,
+                reservation_id BIGINT NOT NULL,
+                contract_number VARCHAR(50) NOT NULL UNIQUE,
+                contract_type VARCHAR(50) NOT NULL,
+                status VARCHAR(20) NOT NULL,
+                start_date DATE NOT NULL,
+                end_date DATE NOT NULL,
+                total_amount DECIMAL(10,2) NOT NULL,
+                terms TEXT,
+                notes TEXT,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                FOREIGN KEY (reservation_id) REFERENCES reservations(id) ON DELETE CASCADE
+            )
+        """;
+        
+        try (Statement stmt = connection.createStatement()) {
+            stmt.execute(sql);
+        }
     }
 
     @Override
     public Contract save(Contract contract) {
-        String sql = "INSERT INTO contracts (id, reservation_id, contract_number, contract_type, " +
-                    "status, start_date, end_date, created_at, updated_at) " +
-                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO contracts (reservation_id, contract_number, contract_type, status, start_date, " +
+                    "end_date, total_amount, terms, notes) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
         
-        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-            stmt.setInt(1, contract.getId());
-            stmt.setInt(2, contract.getReservationId());
-            stmt.setString(3, contract.getContractNumber());
-            stmt.setString(4, contract.getContractType());
-            stmt.setString(5, contract.getStatus());
-            stmt.setDate(6, Date.valueOf(contract.getStartDate()));
-            stmt.setDate(7, Date.valueOf(contract.getEndDate()));
-            stmt.setDate(8, Date.valueOf(contract.getCreatedAt()));
-            stmt.setDate(9, Date.valueOf(contract.getUpdatedAt()));
+        try (PreparedStatement stmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+            stmt.setLong(1, contract.getReservationId());
+            stmt.setString(2, contract.getContractNumber());
+            stmt.setString(3, contract.getContractType());
+            stmt.setString(4, contract.getStatus());
+            stmt.setDate(5, Date.valueOf(contract.getStartDate()));
+            stmt.setDate(6, Date.valueOf(contract.getEndDate()));
+            stmt.setDouble(7, contract.getTotalAmount());
+            stmt.setString(8, contract.getTerms());
+            stmt.setString(9, contract.getNotes());
             
-            stmt.executeUpdate();
+            int affectedRows = stmt.executeUpdate();
+            if (affectedRows == 0) {
+                throw new SQLException("Creating contract failed, no rows affected.");
+            }
+
+            try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
+                if (generatedKeys.next()) {
+                    contract.setId(generatedKeys.getLong(1));
+                } else {
+                    throw new SQLException("Creating contract failed, no ID obtained.");
+                }
+            }
+            
             return contract;
         } catch (SQLException e) {
             throw new RuntimeException("Error saving contract", e);
@@ -41,30 +81,26 @@ public class ContractRepositoryImpl implements ContractRepository {
     }
 
     @Override
-    public Optional<Contract> findById(int id) {
+    public Optional<Contract> findById(Long id) {
         String sql = "SELECT * FROM contracts WHERE id = ?";
-        
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-            stmt.setInt(1, id);
+            stmt.setLong(1, id);
             ResultSet rs = stmt.executeQuery();
-            
             if (rs.next()) {
                 return Optional.of(mapResultSetToContract(rs));
             }
             return Optional.empty();
         } catch (SQLException e) {
-            throw new RuntimeException("Error finding contract by id", e);
+            throw new RuntimeException("Error finding contract by ID", e);
         }
     }
 
     @Override
     public List<Contract> findAll() {
-        String sql = "SELECT * FROM contracts";
         List<Contract> contracts = new ArrayList<>();
-        
+        String sql = "SELECT * FROM contracts";
         try (Statement stmt = connection.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
-            
             while (rs.next()) {
                 contracts.add(mapResultSetToContract(rs));
             }
@@ -75,47 +111,12 @@ public class ContractRepositoryImpl implements ContractRepository {
     }
 
     @Override
-    public Contract update(Contract contract) {
-        String sql = "UPDATE contracts SET reservation_id = ?, contract_number = ?, " +
-                    "contract_type = ?, status = ?, start_date = ?, end_date = ?, " +
-                    "updated_at = ? WHERE id = ?";
-        
-        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-            stmt.setInt(1, contract.getReservationId());
-            stmt.setString(2, contract.getContractNumber());
-            stmt.setString(3, contract.getContractType());
-            stmt.setString(4, contract.getStatus());
-            stmt.setDate(5, Date.valueOf(contract.getStartDate()));
-            stmt.setDate(6, Date.valueOf(contract.getEndDate()));
-            stmt.setDate(7, Date.valueOf(contract.getUpdatedAt()));
-            stmt.setInt(8, contract.getId());
-            
-            stmt.executeUpdate();
-            return contract;
-        } catch (SQLException e) {
-            throw new RuntimeException("Error updating contract", e);
-        }
-    }
-
-    @Override
-    public void deleteById(int id) {
-        String sql = "DELETE FROM contracts WHERE id = ?";
-        
-        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-            stmt.setInt(1, id);
-            stmt.executeUpdate();
-        } catch (SQLException e) {
-            throw new RuntimeException("Error deleting contract", e);
-        }
-    }
-
-    @Override
-    public List<Contract> findByReservationId(int reservationId) {
+    public List<Contract> findByReservationId(Long reservationId) {
         String sql = "SELECT * FROM contracts WHERE reservation_id = ?";
         List<Contract> contracts = new ArrayList<>();
         
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-            stmt.setInt(1, reservationId);
+            stmt.setLong(1, reservationId);
             ResultSet rs = stmt.executeQuery();
             
             while (rs.next()) {
@@ -123,7 +124,7 @@ public class ContractRepositoryImpl implements ContractRepository {
             }
             return contracts;
         } catch (SQLException e) {
-            throw new RuntimeException("Error finding contracts by reservation id", e);
+            throw new RuntimeException("Error finding contracts by reservation ID", e);
         }
     }
 
@@ -164,6 +165,50 @@ public class ContractRepositoryImpl implements ContractRepository {
     }
 
     @Override
+    public Contract update(Contract contract) {
+        if (contract.getId() == null) {
+            throw new IllegalArgumentException("Contract ID cannot be null for update operation");
+        }
+        
+        String sql = "UPDATE contracts SET reservation_id = ?, contract_number = ?, contract_type = ?, " +
+                    "status = ?, start_date = ?, end_date = ?, total_amount = ?, terms = ?, notes = ? " +
+                    "WHERE id = ?";
+        
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setLong(1, contract.getReservationId());
+            stmt.setString(2, contract.getContractNumber());
+            stmt.setString(3, contract.getContractType());
+            stmt.setString(4, contract.getStatus());
+            stmt.setDate(5, Date.valueOf(contract.getStartDate()));
+            stmt.setDate(6, Date.valueOf(contract.getEndDate()));
+            stmt.setDouble(7, contract.getTotalAmount());
+            stmt.setString(8, contract.getTerms());
+            stmt.setString(9, contract.getNotes());
+            stmt.setLong(10, contract.getId());
+            
+            int affectedRows = stmt.executeUpdate();
+            if (affectedRows == 0) {
+                throw new SQLException("Updating contract failed, no rows affected.");
+            }
+            
+            return contract;
+        } catch (SQLException e) {
+            throw new RuntimeException("Error updating contract", e);
+        }
+    }
+
+    @Override
+    public void deleteById(Long id) {
+        String sql = "DELETE FROM contracts WHERE id = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setLong(1, id);
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException("Error deleting contract", e);
+        }
+    }
+
+    @Override
     public List<Contract> findByDateRange(LocalDate startDate, LocalDate endDate) {
         String sql = "SELECT * FROM contracts WHERE start_date >= ? AND end_date <= ?";
         List<Contract> contracts = new ArrayList<>();
@@ -184,15 +229,16 @@ public class ContractRepositoryImpl implements ContractRepository {
 
     private Contract mapResultSetToContract(ResultSet rs) throws SQLException {
         Contract contract = new Contract();
-        contract.setId(rs.getInt("id"));
-        contract.setReservationId(rs.getInt("reservation_id"));
+        contract.setId(rs.getLong("id"));
+        contract.setReservationId(rs.getLong("reservation_id"));
         contract.setContractNumber(rs.getString("contract_number"));
         contract.setContractType(rs.getString("contract_type"));
         contract.setStatus(rs.getString("status"));
         contract.setStartDate(rs.getDate("start_date").toLocalDate());
         contract.setEndDate(rs.getDate("end_date").toLocalDate());
-        contract.setCreatedAt(rs.getDate("created_at").toLocalDate());
-        contract.setUpdatedAt(rs.getDate("updated_at").toLocalDate());
+        contract.setTotalAmount(rs.getDouble("total_amount"));
+        contract.setTerms(rs.getString("terms"));
+        contract.setNotes(rs.getString("notes"));
         return contract;
     }
 } 

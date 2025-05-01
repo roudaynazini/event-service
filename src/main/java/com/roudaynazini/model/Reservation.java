@@ -3,28 +3,30 @@ package com.roudaynazini.model;
 import java.time.LocalDate;
 
 public class Reservation {
-    private int id;
+    private Long id;
     private String clientName;
     private LocalDate eventDate;
     private String status;
+    private String notes;
     private LocalDate createdAt;
     private LocalDate updatedAt;
 
     public Reservation() {
     }
 
-    public Reservation(int id, String clientName, LocalDate eventDate, String status) {
+    public Reservation(Long id, String clientName, LocalDate eventDate, String status, String notes) {
         this.id = id;
         this.clientName = clientName;
         this.eventDate = eventDate;
         this.status = status;
+        this.notes = notes;
     }
 
-    public int getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -52,6 +54,14 @@ public class Reservation {
         this.status = status;
     }
 
+    public String getNotes() {
+        return notes;
+    }
+
+    public void setNotes(String notes) {
+        this.notes = notes;
+    }
+
     public LocalDate getCreatedAt() {
         return createdAt;
     }
@@ -75,6 +85,7 @@ public class Reservation {
                 ", clientName='" + clientName + '\'' +
                 ", eventDate=" + eventDate +
                 ", status='" + status + '\'' +
+                ", notes='" + notes + '\'' +
                 '}';
     }
 } 

@@ -2,8 +2,12 @@ package com.roudaynazini;
 
 import com.roudaynazini.model.Contract;
 import com.roudaynazini.model.Reservation;
+import com.roudaynazini.model.User;
 import com.roudaynazini.repository.ContractRepository;
+import com.roudaynazini.repository.MySQLUserRepository;
 import com.roudaynazini.repository.ReservationRepository;
+import com.roudaynazini.repository.UserRepository;
+import com.roudaynazini.service.UserService;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -15,23 +19,26 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.scene.Node;
 
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 public class MainViewController {
 
     @FXML
-    private TabPane mainTabPane;
-
-    // Reservation UI elements
+    private VBox reservationsSection;
+    @FXML
+    private VBox contractsSection;
+    @FXML
+    private Text statusText;
     @FXML
     private TableView<Reservation> reservationTable;
     @FXML
@@ -43,13 +50,14 @@ public class MainViewController {
     @FXML
     private TableColumn<Reservation, String> statusColumn;
     @FXML
+    private TableColumn<Reservation, String> notesColumn;
+    @FXML
     private TextField reservationSearchField;
     @FXML
     private ComboBox<String> reservationStatusFilter;
     @FXML
     private DatePicker reservationDateFilter;
 
-    // Contract UI elements
     @FXML
     private TableView<Contract> contractTable;
     @FXML
@@ -65,44 +73,70 @@ public class MainViewController {
     @FXML
     private TableColumn<Contract, String> contractEndDateColumn;
     @FXML
+    private TableColumn<Contract, String> contractReservationIdColumn;
+    @FXML
+    private TableColumn<Contract, String> contractTermsColumn;
+    @FXML
     private TextField contractSearchField;
     @FXML
     private ComboBox<String> contractTypeFilter;
     @FXML
     private ComboBox<String> contractStatusFilter;
 
-    // Status bar
-    @FXML
-    private Text statusText;
-
-    // Repositories
     private ReservationRepository reservationRepository;
     private ContractRepository contractRepository;
+    private UserRepository userRepository;
 
-    // Observable lists for tables
     private ObservableList<Reservation> reservationList = FXCollections.observableArrayList();
     private ObservableList<Contract> contractList = FXCollections.observableArrayList();
     
-    // Filtered lists for search and filtering
     private FilteredList<Reservation> filteredReservations;
     private FilteredList<Contract> filteredContracts;
 
-    // Date formatter
     private final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
+    private User currentUser;
+
+    @FXML
+    private TableView<User> userTable;
+    @FXML
+    private TextField usernameField;
+    @FXML
+    private PasswordField passwordField;
+    @FXML
+    private TextField emailField;
+
+    private UserService userService;
+
+    @FXML
+    private VBox menuVBox;
 
     @FXML
     public void initialize() {
+        // Initialize repositories
+        userRepository = new MySQLUserRepository();
+        
+        // Create default users if none exist
+        createDefaultUser();
+        
         // Initialize reservation table columns
-        idColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
+        idColumn.setCellValueFactory(cellData -> {
+            Reservation reservation = cellData.getValue();
+            return new SimpleStringProperty(String.valueOf(reservation.getId()));
+        });
         nameColumn.setCellValueFactory(new PropertyValueFactory<>("clientName"));
         dateColumn.setCellValueFactory(cellData -> {
             LocalDate date = cellData.getValue().getEventDate();
             return new SimpleStringProperty(date != null ? date.format(dateFormatter) : "");
         });
         statusColumn.setCellValueFactory(new PropertyValueFactory<>("status"));
+        notesColumn.setCellValueFactory(new PropertyValueFactory<>("notes"));
 
         // Initialize contract table columns
-        contractIdColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
+        contractIdColumn.setCellValueFactory(cellData -> {
+            Contract contract = cellData.getValue();
+            return new SimpleStringProperty(String.valueOf(contract.getId()));
+        });
         contractNumberColumn.setCellValueFactory(new PropertyValueFactory<>("contractNumber"));
         contractTypeColumn.setCellValueFactory(new PropertyValueFactory<>("contractType"));
         contractStatusColumn.setCellValueFactory(new PropertyValueFactory<>("status"));
@@ -114,8 +148,26 @@ public class MainViewController {
             LocalDate date = cellData.getValue().getEndDate();
             return new SimpleStringProperty(date != null ? date.format(dateFormatter) : "");
         });
+        contractReservationIdColumn.setCellValueFactory(cellData -> {
+            Contract contract = cellData.getValue();
+            return new SimpleStringProperty(String.valueOf(contract.getReservationId()));
+        });
+        contractTermsColumn.setCellValueFactory(new PropertyValueFactory<>("terms"));
 
-        // Set up search field listeners
+        // Initialize filter ComboBoxes with values
+        reservationStatusFilter.setItems(FXCollections.observableArrayList(
+            "En attente", "Confirmé", "Annulé", "Terminé"
+        ));
+        
+        contractTypeFilter.setItems(FXCollections.observableArrayList(
+            "Standard", "Premium", "VIP", "Personnalisé"
+        ));
+        
+        contractStatusFilter.setItems(FXCollections.observableArrayList(
+            "Brouillon", "Actif", "Expiré", "Résilié"
+        ));
+
+        // Set up search field listeners with immediate filtering
         reservationSearchField.textProperty().addListener((observable, oldValue, newValue) -> {
             updateReservationFilters();
         });
@@ -124,7 +176,7 @@ public class MainViewController {
             updateContractFilters();
         });
 
-        // Set up filter listeners
+        // Set up filter listeners with immediate filtering
         reservationStatusFilter.valueProperty().addListener((observable, oldValue, newValue) -> {
             updateReservationFilters();
         });
@@ -141,78 +193,97 @@ public class MainViewController {
             updateContractFilters();
         });
 
-        // Set up tab change listener
-        mainTabPane.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue != null) {
-                if (newValue.getText().equals("Reservations")) {
-                    loadReservations();
-                } else if (newValue.getText().equals("Contracts")) {
-                    loadContracts();
-                }
+        // Show reservations section by default
+        reservationsSection.setVisible(true);
+        contractsSection.setVisible(false);
+
+        // Add a listener to update UI when the scene is ready
+        reservationsSection.sceneProperty().addListener((obs, oldScene, newScene) -> {
+            if (newScene != null) {
+                updateUIForUserRole();
             }
         });
     }
 
-    public void setRepositories(ReservationRepository reservationRepository, ContractRepository contractRepository) {
+    private void createDefaultUser() {
+        System.out.println("Starting createDefaultUser...");
+        try {
+            // Check if admin user exists
+            User adminUser = userRepository.findByUsername("admin");
+            System.out.println("Admin user exists: " + (adminUser != null));
+            
+            if (adminUser == null) {
+                adminUser = new User();
+                adminUser.setUsername("admin");
+                adminUser.setPassword("admin123");
+                adminUser.setEmail("admin@example.com");
+                adminUser.setRole("ADMIN");
+                adminUser = userRepository.save(adminUser);
+                System.out.println("Created admin user with ID: " + (adminUser != null ? adminUser.getId() : "null"));
+            }
+
+            // Check if regular user exists
+            User regularUser = userRepository.findByUsername("user");
+            System.out.println("Regular user exists: " + (regularUser != null));
+            
+            if (regularUser == null) {
+                regularUser = new User();
+                regularUser.setUsername("user");
+                regularUser.setPassword("user123");
+                regularUser.setEmail("user@example.com");
+                regularUser.setRole("USER");
+                regularUser = userRepository.save(regularUser);
+                System.out.println("Created regular user with ID: " + (regularUser != null ? regularUser.getId() : "null"));
+            }
+
+            // Verify all users in database
+            List<User> allUsers = userRepository.findAll();
+            System.out.println("Total users in database: " + allUsers.size());
+            for (User user : allUsers) {
+                System.out.println("User: " + user.getUsername() + ", Role: " + user.getRole());
+            }
+
+            // Set current user to admin by default
+            currentUser = adminUser;
+            updateStatusBar("Default users created successfully");
+            System.out.println("Default user creation completed successfully");
+        } catch (Exception e) {
+            System.err.println("Error in createDefaultUser: " + e.getMessage());
+            e.printStackTrace();
+            updateStatusBar("Error creating default users: " + e.getMessage());
+        }
+    }
+
+    public void setRepositories(ReservationRepository reservationRepository, ContractRepository contractRepository, UserRepository userRepository) {
         this.reservationRepository = reservationRepository;
         this.contractRepository = contractRepository;
-        
-        // Load initial data
+        this.userRepository = userRepository;
         loadData();
     }
 
     private void loadData() {
-        try {
-            // Load reservations
-            List<Reservation> reservations = reservationRepository.findAll();
-            reservationList.setAll(reservations);
-            
-            // Set up filtered list for reservations
-            filteredReservations = new FilteredList<>(reservationList, p -> true);
-            SortedList<Reservation> sortedReservations = new SortedList<>(filteredReservations);
-            sortedReservations.comparatorProperty().bind(reservationTable.comparatorProperty());
-            reservationTable.setItems(sortedReservations);
-            
-            // Initialize status filter with predefined values
-            reservationStatusFilter.setItems(FXCollections.observableArrayList(
-                "Pending", "Confirmed", "Cancelled", "Completed"
-            ));
-            
-            // Load contracts
-            List<Contract> contracts = contractRepository.findAll();
-            contractList.setAll(contracts);
-            
-            // Set up filtered list for contracts
-            filteredContracts = new FilteredList<>(contractList, p -> true);
-            SortedList<Contract> sortedContracts = new SortedList<>(filteredContracts);
-            sortedContracts.comparatorProperty().bind(contractTable.comparatorProperty());
-            contractTable.setItems(sortedContracts);
-            
-            // Initialize contract type filter with predefined values
-            contractTypeFilter.setItems(FXCollections.observableArrayList(
-                "Standard", "Premium", "Custom"
-            ));
-            
-            // Initialize contract status filter with predefined values
-            contractStatusFilter.setItems(FXCollections.observableArrayList(
-                "Draft", "Active", "Expired", "Terminated"
-            ));
-            
-            updateStatusBar("Data loaded successfully");
-        } catch (Exception e) {
-            updateStatusBar("Error loading data: " + e.getMessage());
-            e.printStackTrace();
+        if (reservationRepository != null) {
+            loadReservations();
+        }
+        if (contractRepository != null) {
+            loadContracts();
         }
     }
 
     private void loadReservations() {
-        try {
-            List<Reservation> reservations = reservationRepository.findAll();
-            reservationList.setAll(reservations);
-            updateStatusBar("Reservations loaded successfully");
-        } catch (Exception e) {
-            updateStatusBar("Error loading reservations: " + e.getMessage());
-            e.printStackTrace();
+        // Clear existing items first
+        reservationList.clear();
+        
+        // Load new items
+        List<Reservation> reservations = reservationRepository.findAll();
+        reservationList.setAll(reservations);
+        
+        // Initialize filtered list
+        if (filteredReservations == null) {
+            filteredReservations = new FilteredList<>(reservationList, p -> true);
+            SortedList<Reservation> sortedData = new SortedList<>(filteredReservations);
+            sortedData.comparatorProperty().bind(reservationTable.comparatorProperty());
+            reservationTable.setItems(sortedData);
         }
     }
 
@@ -251,19 +322,21 @@ public class MainViewController {
     private void updateContractFilters() {
         if (filteredContracts == null) return;
         
+        String searchText = contractSearchField.getText().toLowerCase();
+        String selectedType = contractTypeFilter.getValue();
+        String selectedStatus = contractStatusFilter.getValue();
+        
         filteredContracts.setPredicate(contract -> {
             // Search text filter
-            String searchText = contractSearchField.getText().toLowerCase();
-            boolean matchesSearch = contract.getContractNumber().toLowerCase().contains(searchText);
+            boolean matchesSearch = searchText == null || searchText.isEmpty() ||
+                                  contract.getContractNumber().toLowerCase().contains(searchText);
             
             // Type filter
-            String selectedType = contractTypeFilter.getValue();
-            boolean matchesType = selectedType == null || selectedType.isEmpty() || 
+            boolean matchesType = selectedType == null || selectedType.isEmpty() ||
                                 contract.getContractType().equals(selectedType);
             
             // Status filter
-            String selectedStatus = contractStatusFilter.getValue();
-            boolean matchesStatus = selectedStatus == null || selectedStatus.isEmpty() || 
+            boolean matchesStatus = selectedStatus == null || selectedStatus.isEmpty() ||
                                   contract.getStatus().equals(selectedStatus);
             
             return matchesSearch && matchesType && matchesStatus;
@@ -296,36 +369,39 @@ public class MainViewController {
     private void handleClearContractFilters() {
         contractSearchField.clear();
         contractTypeFilter.setValue(null);
-        contractTypeFilter.setPromptText("Filter by type");
         contractStatusFilter.setValue(null);
-        contractStatusFilter.setPromptText("Filter by status");
         updateContractFilters();
-        updateStatusBar("Contract filters cleared");
+        updateStatusBar("Filtres effacés");
     }
 
     @FXML
-    private void handleAddReservation() {
+    private void handleNewReservation() {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("reservation-dialog.fxml"));
-            Parent root = loader.load();
-            ReservationDialogController controller = loader.getController();
-            controller.setReservationRepository(reservationRepository);
-            
+
             Stage dialogStage = new Stage();
             dialogStage.setTitle("Add Reservation");
-            dialogStage.initModality(Modality.APPLICATION_MODAL);
-            dialogStage.setScene(new Scene(root));
-            
+            dialogStage.initModality(Modality.WINDOW_MODAL);
+            dialogStage.initOwner(reservationTable.getScene().getWindow());
+
+            Scene scene = new Scene(loader.load());
+            dialogStage.setScene(scene);
+
+            ReservationDialogController controller = loader.getController();
+            controller.setReservationRepository(reservationRepository);
             controller.setDialogStage(dialogStage);
+
+            // Show the dialog and wait for it to close
             dialogStage.showAndWait();
-            
+
+            // Only reload if a reservation was actually added
             if (controller.isOkClicked()) {
                 loadReservations();
-                updateStatusBar("Reservation added successfully");
             }
+
         } catch (IOException e) {
-            updateStatusBar("Error opening add reservation dialog: " + e.getMessage());
             e.printStackTrace();
+            showAlert("Error", "Could not load the dialog window.");
         }
     }
 
@@ -390,6 +466,17 @@ public class MainViewController {
 
     @FXML
     private void handleAddContract() {
+        if (currentUser == null || !"ADMIN".equals(currentUser.getRole())) {
+            showAlert("Access Denied", "Only administrators can add contracts.");
+            return;
+        }
+
+        // Check if repositories are initialized
+        if (contractRepository == null || reservationRepository == null) {
+            showAlert("Error", "Repositories not initialized. Please try again.");
+            return;
+        }
+
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("contract-dialog.fxml"));
             Parent root = loader.load();
@@ -410,13 +497,17 @@ public class MainViewController {
                 updateStatusBar("Contract added successfully");
             }
         } catch (IOException e) {
-            updateStatusBar("Error opening add contract dialog: " + e.getMessage());
+            showAlert("Error", "Error opening add contract dialog: " + e.getMessage());
             e.printStackTrace();
         }
     }
 
     @FXML
     private void handleEditContract() {
+        if (currentUser == null || !"ADMIN".equals(currentUser.getRole())) {
+            showAlert("Access Denied", "Only administrators can edit contracts.");
+            return;
+        }
         Contract selectedContract = contractTable.getSelectionModel().getSelectedItem();
         if (selectedContract == null) {
             showAlert("No Selection", "Please select a contract to edit.");
@@ -451,6 +542,10 @@ public class MainViewController {
 
     @FXML
     private void handleDeleteContract() {
+        if (currentUser == null || !"ADMIN".equals(currentUser.getRole())) {
+            showAlert("Access Denied", "Only administrators can delete contracts.");
+            return;
+        }
         Contract selectedContract = contractTable.getSelectionModel().getSelectedItem();
         if (selectedContract == null) {
             showAlert("No Selection", "Please select a contract to delete.");
@@ -477,6 +572,11 @@ public class MainViewController {
 
     @FXML
     private void handleViewContractsForReservation() {
+        if (currentUser == null || !"ADMIN".equals(currentUser.getRole())) {
+            showAlert("Access Denied", "Only administrators can view contracts.");
+            return;
+        }
+
         Reservation selectedReservation = reservationTable.getSelectionModel().getSelectedItem();
         if (selectedReservation == null) {
             showAlert("No Selection", "Please select a reservation to view its contracts.");
@@ -485,7 +585,8 @@ public class MainViewController {
         
         try {
             // Switch to contracts tab
-            mainTabPane.getSelectionModel().select(1); // Index 1 is the Contracts tab
+            contractsSection.setVisible(true);
+            reservationsSection.setVisible(false);
             
             // Apply filter to show only contracts for this reservation
             contractSearchField.clear();
@@ -513,7 +614,8 @@ public class MainViewController {
         
         try {
             // Switch to reservations tab
-            mainTabPane.getSelectionModel().select(0); // Index 0 is the Reservations tab
+            reservationsSection.setVisible(true);
+            contractsSection.setVisible(false);
             
             // Apply filter to show only this reservation
             reservationSearchField.clear();
@@ -531,6 +633,85 @@ public class MainViewController {
         }
     }
 
+    @FXML
+    private void handleShowReservations() {
+        reservationsSection.setVisible(true);
+        contractsSection.setVisible(false);
+        updateStatusBar("Showing Reservations");
+    }
+
+    @FXML
+    private void handleShowContracts() {
+        if (currentUser != null && "ADMIN".equals(currentUser.getRole())) {
+            reservationsSection.setVisible(false);
+            contractsSection.setVisible(true);
+            updateStatusBar("Showing Contracts");
+        }
+    }
+
+    @FXML
+    private void handleSwitchRole() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("login-dialog.fxml"));
+            Parent root = loader.load();
+            LoginDialogController controller = loader.getController();
+            controller.setUserRepository(userRepository);
+            
+            Stage dialogStage = new Stage();
+            dialogStage.setTitle("Switch User");
+            dialogStage.initModality(Modality.APPLICATION_MODAL);
+            dialogStage.setScene(new Scene(root));
+            
+            controller.setDialogStage(dialogStage);
+            dialogStage.showAndWait();
+            
+            if (controller.isLoginSuccessful()) {
+                User newUser = controller.getLoggedInUser();
+                setCurrentUser(newUser);
+                String roleMessage = "ADMIN".equals(newUser.getRole()) ? "Admin Connected" : "User Connected";
+                System.out.println(roleMessage + " - " + newUser.getUsername());
+                updateStatusBar("Logged in as: " + newUser.getUsername() + " (" + newUser.getRole() + ")");
+            }
+        } catch (IOException e) {
+            updateStatusBar("Error opening login dialog: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    @FXML
+    private void handleShowCalendar() {
+        if (currentUser == null || !"ADMIN".equals(currentUser.getRole())) {
+            showAlert("Access Denied", "Only administrators can access the calendar view.");
+            return;
+        }
+
+        // Check if repository is initialized
+        if (reservationRepository == null) {
+            showAlert("Error", "Reservation repository is not initialized.");
+            return;
+        }
+
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("calendar-view.fxml"));
+            Parent root = loader.load();
+
+            CalendarViewController controller = loader.getController();
+            controller.setReservationRepository(reservationRepository);
+
+            Stage calendarStage = new Stage();
+            calendarStage.setTitle("Reservation Calendar");
+            calendarStage.initModality(Modality.WINDOW_MODAL);
+            calendarStage.initOwner(reservationTable.getScene().getWindow());
+
+            Scene scene = new Scene(root);
+            calendarStage.setScene(scene);
+            calendarStage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+            showAlert("Error", "Could not load the calendar view: " + e.getMessage());
+        }
+    }
+
     private void showAlert(String title, String content) {
         Alert alert = new Alert(Alert.AlertType.WARNING);
         alert.setTitle(title);
@@ -539,7 +720,136 @@ public class MainViewController {
         alert.showAndWait();
     }
 
-    private void updateStatusBar(String message) {
-        statusText.setText(message);
+    public void updateStatusBar(String message) {
+        if (statusText != null) {
+            statusText.setText(message);
+        }
+    }
+
+    public void setCurrentUser(User user) {
+        this.currentUser = user;
+        updateUIForUserRole();
+    }
+
+    private void updateUIForUserRole() {
+        if (currentUser == null) {
+            // Hide all sections if no user is logged in
+            reservationsSection.setVisible(false);
+            contractsSection.setVisible(false);
+            return;
+        }
+
+        boolean isAdmin = "ADMIN".equals(currentUser.getRole());
+        
+        // Always show reservations section
+        reservationsSection.setVisible(true);
+        
+        // Show/hide contracts section based on user role
+        contractsSection.setVisible(false); // Always start with contracts hidden
+        
+        // Update menu buttons visibility
+        if (menuVBox != null) {
+            for (Node node : menuVBox.getChildren()) {
+                if (node instanceof Button) {
+                    Button button = (Button) node;
+                    if ("Contracts".equals(button.getText())) {
+                        button.setVisible(isAdmin);
+                        button.setManaged(isAdmin);
+                    }
+                }
+            }
+        }
+
+        // Hide admin-only buttons for non-admin users
+        if (reservationsSection != null) {
+            reservationsSection.lookupAll(".admin-only").forEach(node -> {
+                node.setVisible(isAdmin);
+                node.setManaged(isAdmin); // This prevents the space from being reserved
+            });
+        }
+        
+        // Update status bar
+        updateStatusBar("Logged in as: " + currentUser.getUsername() + " (" + currentUser.getRole() + ")");
+    }
+
+    private void generateContractForReservation(Reservation reservation) {
+        Contract contract = new Contract();
+        contract.setReservationId(Long.valueOf(reservation.getId()));
+        contract.setContractNumber("CON-" + System.currentTimeMillis());
+        contract.setContractType("Standard");
+        contract.setStatus("Brouillon");
+        contract.setStartDate(LocalDate.now());
+        contract.setEndDate(reservation.getEventDate());
+        contract.setTotalAmount(0.0);
+        contract.setTerms("");
+        contract.setNotes("Generated from reservation " + reservation.getId());
+        
+        if (showContractDialog(contract)) {
+            try {
+                contractRepository.save(contract);
+                loadData();
+                updateStatusBar("Contract generated successfully");
+            } catch (Exception e) {
+                showAlert("Error", "Failed to generate contract: " + e.getMessage());
+            }
+        }
+    }
+
+    private void showContractDetails(Contract contract) {
+        if (contract != null) {
+            StringBuilder details = new StringBuilder();
+            details.append("Contract Number: ").append(contract.getContractNumber()).append("\n");
+            details.append("Status: ").append(contract.getStatus()).append("\n");
+            details.append("Start Date: ").append(contract.getStartDate()).append("\n");
+            details.append("End Date: ").append(contract.getEndDate()).append("\n");
+            details.append("Total Amount: ").append(contract.getTotalAmount()).append("\n");
+            details.append("Notes: ").append(contract.getNotes());
+            
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Contract Details");
+            alert.setHeaderText(null);
+            alert.setContentText(details.toString());
+            alert.showAndWait();
+        }
+    }
+
+    private boolean showContractDialog(Contract contract) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("contract-dialog.fxml"));
+            Parent root = loader.load();
+            ContractDialogController controller = loader.getController();
+            controller.setContractRepository(contractRepository);
+            controller.setReservationRepository(reservationRepository);
+            controller.setContract(contract);
+            
+            Stage dialogStage = new Stage();
+            dialogStage.setTitle(contract.getId() == null ? "Add Contract" : "Edit Contract");
+            dialogStage.initModality(Modality.APPLICATION_MODAL);
+            dialogStage.setScene(new Scene(root));
+            
+            controller.setDialogStage(dialogStage);
+            dialogStage.showAndWait();
+            
+            return controller.isOkClicked();
+        } catch (IOException e) {
+            showAlert("Error", "Failed to open contract dialog: " + e.getMessage());
+            return false;
+        }
+    }
+
+    private void refreshContractsTable() {
+        // Implementation of refreshContractsTable method
+    }
+
+    public void setContractRepository(ContractRepository repository) {
+        this.contractRepository = repository;
+    }
+
+    public void setReservationRepository(ReservationRepository repository) {
+        this.reservationRepository = repository;
+    }
+
+    public void setUserService(UserService userService) {
+        this.userService = userService;
     }
 } 

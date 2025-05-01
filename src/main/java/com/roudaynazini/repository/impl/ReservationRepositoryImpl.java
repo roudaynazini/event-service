@@ -1,74 +1,160 @@
 package com.roudaynazini.repository.impl;
 
-import com.roudaynazini.model.Reservation;
 import com.roudaynazini.config.DatabaseConfig;
+import com.roudaynazini.model.Reservation;
 import com.roudaynazini.repository.ReservationRepository;
 
 import java.sql.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 public class ReservationRepositoryImpl implements ReservationRepository {
     private final Connection connection;
 
-    public ReservationRepositoryImpl(Connection connection) {
-        this.connection = connection;
+    public ReservationRepositoryImpl() {
+        try {
+            this.connection = DatabaseConfig.getConnection();
+            System.out.println("Connected to database successfully");
+            createTableIfNotExists();
+            System.out.println("Table created/verified successfully");
+        } catch (SQLException e) {
+            System.err.println("Database initialization error: " + e.getMessage());
+            throw new RuntimeException("Failed to initialize ReservationRepository", e);
+        }
+    }
+
+    private void createTableIfNotExists() throws SQLException {
+        String createTableSQL = """
+            CREATE TABLE IF NOT EXISTS reservations (
+                id BIGINT PRIMARY KEY AUTO_INCREMENT,
+                client_name VARCHAR(100) NOT NULL,
+                event_date DATE NOT NULL,
+                status VARCHAR(20) NOT NULL,
+                notes TEXT,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+        """;
+        
+        try (Statement stmt = connection.createStatement()) {
+            // First check if the table exists
+            ResultSet tables = connection.getMetaData().getTables(null, null, "reservations", null);
+            boolean tableExists = tables.next();
+            
+            if (!tableExists) {
+                // If table doesn't exist, create it
+                stmt.execute(createTableSQL);
+                System.out.println("Created new reservations table");
+            } else {
+                // If table exists, check for required columns
+                DatabaseMetaData metaData = connection.getMetaData();
+                ResultSet columns = metaData.getColumns(null, null, "reservations", null);
+                Set<String> existingColumns = new HashSet<>();
+                
+                while (columns.next()) {
+                    existingColumns.add(columns.getString("COLUMN_NAME").toLowerCase());
+                }
+                
+                // Add any missing columns
+                if (!existingColumns.contains("created_at")) {
+                    stmt.execute("ALTER TABLE reservations ADD COLUMN created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP");
+                    System.out.println("Added created_at column");
+                }
+                
+                if (!existingColumns.contains("updated_at")) {
+                    stmt.execute("ALTER TABLE reservations ADD COLUMN updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP");
+                    System.out.println("Added updated_at column");
+                }
+                
+                if (!existingColumns.contains("notes")) {
+                    stmt.execute("ALTER TABLE reservations ADD COLUMN notes TEXT");
+                    System.out.println("Added notes column");
+                }
+                
+                // Update existing timestamp columns if they exist but don't have default values
+                stmt.execute("ALTER TABLE reservations MODIFY COLUMN created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP");
+                stmt.execute("ALTER TABLE reservations MODIFY COLUMN updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP");
+                System.out.println("Updated timestamp columns default values");
+            }
+        } catch (SQLException e) {
+            System.err.println("Error managing table structure: " + e.getMessage());
+            throw e;
+        }
     }
 
     @Override
     public Reservation save(Reservation reservation) {
-        String sql = "INSERT INTO reservations (id, client_name, event_date, status, " +
-                    "created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?)";
-        
-        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-            stmt.setInt(1, reservation.getId());
-            stmt.setString(2, reservation.getClientName());
-            stmt.setDate(3, Date.valueOf(reservation.getEventDate()));
-            stmt.setString(4, reservation.getStatus());
-            stmt.setDate(5, Date.valueOf(reservation.getCreatedAt()));
-            stmt.setDate(6, Date.valueOf(reservation.getUpdatedAt()));
+        String sql = "INSERT INTO reservations (client_name, event_date, status, notes) VALUES (?, ?, ?, ?)";
+        try (PreparedStatement pstmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+            pstmt.setString(1, reservation.getClientName());
+            pstmt.setDate(2, Date.valueOf(reservation.getEventDate()));
+            pstmt.setString(3, reservation.getStatus());
+            pstmt.setString(4, reservation.getNotes());
             
-            stmt.executeUpdate();
-            return reservation;
+            int affectedRows = pstmt.executeUpdate();
+            
+            if (affectedRows == 0) {
+                throw new SQLException("Creating reservation failed, no rows affected.");
+            }
+            
+            try (ResultSet rs = pstmt.getGeneratedKeys()) {
+                if (rs.next()) {
+                    Long generatedId = rs.getLong(1);
+                    reservation.setId(generatedId);
+                    
+                    // Set the timestamps directly without making another database call
+                    reservation.setCreatedAt(LocalDate.now());
+                    reservation.setUpdatedAt(LocalDate.now());
+                    
+                    return reservation;
+                } else {
+                    throw new SQLException("Creating reservation failed, no ID obtained.");
+                }
+            }
         } catch (SQLException e) {
-            throw new RuntimeException("Error saving reservation", e);
+            String errorMessage = String.format(
+                "Failed to save reservation. SQL State: %s, Error Code: %d, Message: %s",
+                e.getSQLState(),
+                e.getErrorCode(),
+                e.getMessage()
+            );
+            throw new RuntimeException(errorMessage, e);
         }
     }
 
     @Override
-    public Optional<Reservation> findById(int id) {
+    public Optional<Reservation> findById(Long id) {
         String sql = "SELECT * FROM reservations WHERE id = ?";
-        
-        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-            stmt.setInt(1, id);
-            ResultSet rs = stmt.executeQuery();
-            
-            if (rs.next()) {
-                return Optional.of(mapResultSetToReservation(rs));
+        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+            pstmt.setLong(1, id);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    return Optional.of(mapResultSetToReservation(rs));
+                }
             }
-            return Optional.empty();
         } catch (SQLException e) {
-            throw new RuntimeException("Error finding reservation by id", e);
+            throw new RuntimeException("Failed to find reservation by id", e);
         }
+        return Optional.empty();
     }
 
     @Override
     public List<Reservation> findAll() {
-        String sql = "SELECT * FROM reservations";
         List<Reservation> reservations = new ArrayList<>();
-        
+        String sql = "SELECT * FROM reservations";
         try (Statement stmt = connection.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
-            
             while (rs.next()) {
                 reservations.add(mapResultSetToReservation(rs));
             }
-            return reservations;
         } catch (SQLException e) {
-            throw new RuntimeException("Error finding all reservations", e);
+            throw new RuntimeException("Failed to find all reservations", e);
         }
+        return reservations;
     }
 
     @Override
@@ -126,33 +212,30 @@ public class ReservationRepositoryImpl implements ReservationRepository {
     }
 
     @Override
-    public Reservation update(Reservation reservation) {
-        String sql = "UPDATE reservations SET client_name = ?, event_date = ?, " +
-                    "status = ?, updated_at = ? WHERE id = ?";
-        
-        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-            stmt.setString(1, reservation.getClientName());
-            stmt.setDate(2, Date.valueOf(reservation.getEventDate()));
-            stmt.setString(3, reservation.getStatus());
-            stmt.setDate(4, Date.valueOf(reservation.getUpdatedAt()));
-            stmt.setInt(5, reservation.getId());
+    public void update(Reservation reservation) {
+        String sql = "UPDATE reservations SET client_name = ?, event_date = ?, status = ?, notes = ?, updated_at = ? WHERE id = ?";
+        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+            pstmt.setString(1, reservation.getClientName());
+            pstmt.setDate(2, Date.valueOf(reservation.getEventDate()));
+            pstmt.setString(3, reservation.getStatus());
+            pstmt.setString(4, reservation.getNotes());
+            pstmt.setTimestamp(5, Timestamp.valueOf(LocalDate.now().atStartOfDay()));
+            pstmt.setLong(6, reservation.getId());
             
-            stmt.executeUpdate();
-            return reservation;
+            pstmt.executeUpdate();
         } catch (SQLException e) {
-            throw new RuntimeException("Error updating reservation", e);
+            throw new RuntimeException("Failed to update reservation", e);
         }
     }
 
     @Override
-    public void deleteById(int id) {
+    public void deleteById(Long id) {
         String sql = "DELETE FROM reservations WHERE id = ?";
-        
-        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-            stmt.setInt(1, id);
-            stmt.executeUpdate();
+        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+            pstmt.setLong(1, id);
+            pstmt.executeUpdate();
         } catch (SQLException e) {
-            throw new RuntimeException("Error deleting reservation", e);
+            throw new RuntimeException("Failed to delete reservation", e);
         }
     }
 
@@ -253,12 +336,32 @@ public class ReservationRepositoryImpl implements ReservationRepository {
 
     private Reservation mapResultSetToReservation(ResultSet rs) throws SQLException {
         Reservation reservation = new Reservation();
-        reservation.setId(rs.getInt("id"));
+        reservation.setId(rs.getLong("id"));
         reservation.setClientName(rs.getString("client_name"));
         reservation.setEventDate(rs.getDate("event_date").toLocalDate());
         reservation.setStatus(rs.getString("status"));
-        reservation.setCreatedAt(rs.getDate("created_at").toLocalDate());
-        reservation.setUpdatedAt(rs.getDate("updated_at").toLocalDate());
+        reservation.setNotes(rs.getString("notes"));
+        
+        // Handle created_at field if it exists
+        try {
+            Timestamp createdAt = rs.getTimestamp("created_at");
+            if (createdAt != null) {
+                reservation.setCreatedAt(createdAt.toLocalDateTime().toLocalDate());
+            }
+        } catch (SQLException e) {
+            // Field doesn't exist, ignore
+        }
+        
+        // Handle updated_at field if it exists
+        try {
+            Timestamp updatedAt = rs.getTimestamp("updated_at");
+            if (updatedAt != null) {
+                reservation.setUpdatedAt(updatedAt.toLocalDateTime().toLocalDate());
+            }
+        } catch (SQLException e) {
+            // Field doesn't exist, ignore
+        }
+        
         return reservation;
     }
 } 

@@ -25,6 +25,10 @@ public class ContractDialogController {
     private DatePicker startDatePicker;
     @FXML
     private DatePicker endDatePicker;
+    @FXML
+    private TextField totalAmountField;
+    @FXML
+    private TextArea notesArea;
 
     private ContractRepository contractRepository;
     private ReservationRepository reservationRepository;
@@ -34,11 +38,55 @@ public class ContractDialogController {
 
     @FXML
     private void initialize() {
-        // Initialize contract type options
-        contractTypeComboBox.getItems().addAll("Standard", "Premium", "Custom");
-        
         // Initialize status options
-        statusComboBox.getItems().addAll("Draft", "Active", "Expired", "Terminated");
+        statusComboBox.getItems().addAll("Brouillon", "Actif", "Expiré", "Résilié");
+        
+        // Initialize contract type options
+        contractTypeComboBox.getItems().addAll("Standard", "Premium", "VIP", "Personnalisé");
+        
+        // Set default values
+        statusComboBox.setValue("Brouillon");
+        contractTypeComboBox.setValue("Standard");
+        startDatePicker.setValue(LocalDate.now());
+        
+        // Add listener for contract type changes to update total amount
+        contractTypeComboBox.valueProperty().addListener((obs, oldVal, newVal) -> {
+            if (newVal != null) {
+                updateTotalAmount(newVal);
+            }
+        });
+        
+        // Add listener for reservation selection to auto-generate contract number and set end date
+        reservationComboBox.valueProperty().addListener((obs, oldVal, newVal) -> {
+            if (newVal != null) {
+                generateContractNumber(newVal);
+                endDatePicker.setValue(newVal.getEventDate());
+            }
+        });
+    }
+
+    private void updateTotalAmount(String contractType) {
+        double baseAmount = switch (contractType) {
+            case "Standard" -> 1000.0;
+            case "Premium" -> 2000.0;
+            case "VIP" -> 3000.0;
+            case "Personnalisé" -> 1500.0;
+            default -> 1000.0;
+        };
+        totalAmountField.setText(String.format("%.2f", baseAmount));
+    }
+
+    private void generateContractNumber(Reservation reservation) {
+        String contractType = contractTypeComboBox.getValue();
+        String prefix = switch (contractType) {
+            case "Standard" -> "STD";
+            case "Premium" -> "PRE";
+            case "VIP" -> "VIP";
+            case "Personnalisé" -> "CUS";
+            default -> "CON";
+        };
+        String timestamp = String.valueOf(System.currentTimeMillis()).substring(8);
+        contractNumberField.setText(prefix + "-" + reservation.getId() + "-" + timestamp);
     }
 
     public void setContractRepository(ContractRepository repository) {
@@ -72,9 +120,7 @@ public class ContractDialogController {
 
     public void setContract(Contract contract) {
         this.contract = contract;
-        
-        // Populate fields with contract data
-        if (contract.getReservationId() > 0) {
+        if (contract.getReservationId() != null && contract.getReservationId() > 0) {
             try {
                 Optional<Reservation> reservationOpt = reservationRepository.findById(contract.getReservationId());
                 reservationOpt.ifPresent(reservation -> reservationComboBox.setValue(reservation));
@@ -82,12 +128,13 @@ public class ContractDialogController {
                 // Ignore if reservation not found
             }
         }
-        
         contractNumberField.setText(contract.getContractNumber());
         contractTypeComboBox.setValue(contract.getContractType());
         statusComboBox.setValue(contract.getStatus());
         startDatePicker.setValue(contract.getStartDate());
         endDatePicker.setValue(contract.getEndDate());
+        totalAmountField.setText(String.valueOf(contract.getTotalAmount()));
+        notesArea.setText(contract.getNotes());
     }
 
     public boolean isOkClicked() {
@@ -99,30 +146,22 @@ public class ContractDialogController {
         if (isInputValid()) {
             if (contract == null) {
                 contract = new Contract();
-                // Set creation date for new contracts
-                contract.setCreatedAt(LocalDate.now());
             }
-            
-            // Update contract with form data
             Reservation selectedReservation = reservationComboBox.getValue();
             if (selectedReservation != null) {
-                contract.setReservationId(selectedReservation.getId());
+                contract.setReservationId(Long.valueOf(selectedReservation.getId()));
             }
-            
             contract.setContractNumber(contractNumberField.getText());
             contract.setContractType(contractTypeComboBox.getValue());
             contract.setStatus(statusComboBox.getValue());
             contract.setStartDate(startDatePicker.getValue());
             contract.setEndDate(endDatePicker.getValue());
-            // Always update the updatedAt date
-            contract.setUpdatedAt(LocalDate.now());
-            
+            contract.setTotalAmount(Double.parseDouble(totalAmountField.getText()));
+            contract.setNotes(notesArea.getText());
             try {
-                if (contract.getId() == 0) {
-                    // New contract
+                if (contract.getId() == null || contract.getId() == 0) {
                     contractRepository.save(contract);
                 } else {
-                    // Existing contract
                     contractRepository.update(contract);
                 }
                 okClicked = true;
@@ -140,34 +179,36 @@ public class ContractDialogController {
 
     private boolean isInputValid() {
         String errorMessage = "";
-
         if (reservationComboBox.getValue() == null) {
             errorMessage += "Reservation is required!\n";
         }
-        
         if (contractNumberField.getText() == null || contractNumberField.getText().trim().isEmpty()) {
             errorMessage += "Contract number is required!\n";
         }
-        
         if (contractTypeComboBox.getValue() == null) {
             errorMessage += "Contract type is required!\n";
         }
-        
         if (statusComboBox.getValue() == null) {
             errorMessage += "Status is required!\n";
         }
-        
         if (startDatePicker.getValue() == null) {
             errorMessage += "Start date is required!\n";
         }
-        
         if (endDatePicker.getValue() == null) {
             errorMessage += "End date is required!\n";
         } else if (startDatePicker.getValue() != null && 
                   endDatePicker.getValue().isBefore(startDatePicker.getValue())) {
             errorMessage += "End date cannot be before start date!\n";
         }
-
+        if (totalAmountField.getText() == null || totalAmountField.getText().trim().isEmpty()) {
+            errorMessage += "Total amount is required!\n";
+        } else {
+            try {
+                Double.parseDouble(totalAmountField.getText());
+            } catch (NumberFormatException e) {
+                errorMessage += "Total amount must be a number!\n";
+            }
+        }
         if (errorMessage.length() == 0) {
             return true;
         } else {
