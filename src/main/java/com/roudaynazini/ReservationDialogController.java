@@ -4,7 +4,19 @@ import com.roudaynazini.model.Reservation;
 import com.roudaynazini.repository.ReservationRepository;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.WriterException;
+import com.google.zxing.qrcode.QRCodeWriter;
+import com.google.zxing.common.BitMatrix;
+import com.google.zxing.client.j2se.MatrixToImageWriter;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
 
 import java.time.LocalDate;
 
@@ -22,6 +34,12 @@ public class ReservationDialogController {
     private Button okButton;
     @FXML
     private Button cancelButton;
+    @FXML
+    private ImageView qrCodeImageView;
+    @FXML
+    private Button showQrButton;
+    @FXML
+    private Label qrCodeLabel;
 
     private ReservationRepository reservationRepository;
     private Stage dialogStage;
@@ -48,6 +66,9 @@ public class ReservationDialogController {
         eventDatePicker.setValue(reservation.getEventDate());
         statusComboBox.setValue(reservation.getStatus());
         notesArea.setText(reservation.getNotes());
+        // Hide QR code by default
+        qrCodeImageView.setVisible(false);
+        qrCodeLabel.setVisible(false);
     }
 
     public void setViewOnly(boolean viewOnly) {
@@ -101,6 +122,13 @@ public class ReservationDialogController {
         dialogStage.close();
     }
 
+    @FXML
+    private void handleShowQrCode() {
+        generateAndShowQrCode(reservation);
+        qrCodeImageView.setVisible(true);
+        qrCodeLabel.setVisible(true);
+    }
+
     private boolean isInputValid() {
         String errorMessage = "";
 
@@ -134,7 +162,27 @@ public class ReservationDialogController {
         alert.showAndWait();
     }
 
+    private void generateAndShowQrCode(Reservation reservation) {
+        if (reservation == null) {
+            qrCodeImageView.setImage(null);
+            return;
+        }
+        String qrContent = "Reservation ID: " + reservation.getId() + "\nClient: " + reservation.getClientName() + "\nDate: " + reservation.getEventDate();
+        QRCodeWriter qrCodeWriter = new QRCodeWriter();
+        try {
+            BitMatrix bitMatrix = qrCodeWriter.encode(qrContent, BarcodeFormat.QR_CODE, 150, 150);
+            BufferedImage bufferedImage = MatrixToImageWriter.toBufferedImage(bitMatrix);
+            ByteArrayOutputStream os = new ByteArrayOutputStream();
+            ImageIO.write(bufferedImage, "png", os);
+            ByteArrayInputStream is = new ByteArrayInputStream(os.toByteArray());
+            Image fxImage = new Image(is);
+            qrCodeImageView.setImage(fxImage);
+        } catch (WriterException | IOException e) {
+            qrCodeImageView.setImage(null);
+        }
+    }
+
     public Reservation getReservation() {
         return reservation;
     }
-} 
+}

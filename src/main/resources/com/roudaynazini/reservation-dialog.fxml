@@ -3,6 +3,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.image.ImageView?>
 
 <VBox xmlns="http://javafx.com/javafx"
       xmlns:fx="http://javafx.com/fxml"
@@ -33,6 +34,13 @@
         <TextArea fx:id="notesArea" GridPane.columnIndex="1" GridPane.rowIndex="3" GridPane.hgrow="ALWAYS"
                   style="-fx-background-color: #9370DB; -fx-text-fill: white;" wrapText="true"/>
 
+        <!-- QR Code Display (hidden by default) -->
+        <Label text="Reservation QR Code:" GridPane.columnIndex="0" GridPane.rowIndex="5" style="-fx-text-fill: #C71585;" fx:id="qrCodeLabel" visible="false"/>
+        <ImageView fx:id="qrCodeImageView" GridPane.columnIndex="1" GridPane.rowIndex="5" fitWidth="150" fitHeight="150" preserveRatio="true" visible="false"/>
+
+        <!-- Show QR Code Button -->
+        <Button fx:id="showQrButton" text="Show QR Code" GridPane.columnSpan="2" GridPane.rowIndex="6" onAction="#handleShowQrCode" style="-fx-background-color: #D8BFD8; -fx-text-fill: #C71585; -fx-font-weight: bold;"/>
+
         <!-- Buttons -->
         <HBox spacing="10" alignment="CENTER_RIGHT" GridPane.columnSpan="2" GridPane.rowIndex="4">
             <Button fx:id="okButton" text="Save" onAction="#handleOk" 
@@ -41,4 +49,4 @@
                     style="-fx-background-color: #D8BFD8; -fx-text-fill: #C71585; -fx-font-weight: bold;"/>
         </HBox>
     </GridPane>
-</VBox> 
+</VBox>
