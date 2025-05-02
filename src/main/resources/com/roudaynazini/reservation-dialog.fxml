@@ -32,7 +32,7 @@
 
         <Label text="Notes:" GridPane.columnIndex="0" GridPane.rowIndex="3" style="-fx-text-fill: #C71585;"/>
         <TextArea fx:id="notesArea" GridPane.columnIndex="1" GridPane.rowIndex="3" GridPane.hgrow="ALWAYS"
-                  style="-fx-background-color: #9370DB; -fx-text-fill: white;" wrapText="true"/>
+                  style="-fx-control-inner-background: #9775d1; -fx-text-fill: #C71585;" wrapText="true"/>
 
         <!-- QR Code Display (hidden by default) -->
         <Label text="Reservation QR Code:" GridPane.columnIndex="0" GridPane.rowIndex="5" style="-fx-text-fill: #C71585;" fx:id="qrCodeLabel" visible="false"/>

@@ -19,17 +19,31 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.WriterException;
+import com.google.zxing.qrcode.QRCodeWriter;
+import com.google.zxing.common.BitMatrix;
+import com.google.zxing.client.j2se.MatrixToImageWriter;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+
 public class CalendarViewController {
     @FXML private VBox root;
     @FXML private GridPane calendarGrid;
     @FXML private Label monthYearLabel;
     @FXML private ListView<Reservation> reservationList;
+    @FXML private ImageView calendarQrCodeImageView;
 
     private ReservationRepository reservationRepository;
     private YearMonth currentYearMonth;
@@ -50,6 +64,9 @@ public class CalendarViewController {
                     setText(item.getClientName() + " (" + item.getStatus() + ")");
                 }
             }
+        });
+        reservationList.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
+            showQrCodeForReservation(newVal);
         });
     }
 
@@ -120,8 +137,7 @@ public class CalendarViewController {
         for (int i = 0; i < maxDisplay; i++) {
             Reservation res = dateReservations.get(i);
             Label resLabel = new Label(res.getClientName());
-            resLabel.setStyle("-fx-text-fill: #9370DB; -fx-padding: 2 5; -fx-background-color: #FFF0F5; " +
-                            "-fx-background-radius: 3; -fx-font-size: 11px;");
+            resLabel.setStyle("-fx-text-fill: white; -fx-padding: 2 5; -fx-background-color: #800080; -fx-background-radius: 3; -fx-font-size: 12px; -fx-font-weight: bold;");
             resLabel.setMaxWidth(Double.MAX_VALUE);
             resLabel.setAlignment(Pos.CENTER);
             reservationsBox.getChildren().add(resLabel);
@@ -160,12 +176,11 @@ public class CalendarViewController {
     private void updateReservationList(List<Reservation> reservations) {
         reservationList.getItems().clear();
         if (reservations.isEmpty()) {
+            reservationList.getItems().add(null); // Show as empty
             reservationList.setPlaceholder(new Label("No reservations for this date"));
-            reservationList.refresh();
             return;
         }
         reservationList.getItems().addAll(reservations);
-        reservationList.refresh();
     }
 
     @FXML
@@ -275,5 +290,25 @@ public class CalendarViewController {
         vbox.setStyle("-fx-padding: 15;");
         dialogStage.setScene(new Scene(vbox, 350, 350));
         dialogStage.showAndWait();
+    }
+
+    private void showQrCodeForReservation(Reservation reservation) {
+        if (reservation == null) {
+            calendarQrCodeImageView.setImage(null);
+            return;
+        }
+        String qrContent = "Reservation ID: " + reservation.getId() + "\nClient: " + reservation.getClientName() + "\nDate: " + reservation.getEventDate();
+        QRCodeWriter qrCodeWriter = new QRCodeWriter();
+        try {
+            BitMatrix bitMatrix = qrCodeWriter.encode(qrContent, BarcodeFormat.QR_CODE, 180, 180);
+            BufferedImage bufferedImage = MatrixToImageWriter.toBufferedImage(bitMatrix);
+            ByteArrayOutputStream os = new ByteArrayOutputStream();
+            ImageIO.write(bufferedImage, "png", os);
+            ByteArrayInputStream is = new ByteArrayInputStream(os.toByteArray());
+            Image fxImage = new Image(is);
+            calendarQrCodeImageView.setImage(fxImage);
+        } catch (WriterException | IOException e) {
+            calendarQrCodeImageView.setImage(null);
+        }
     }
 }

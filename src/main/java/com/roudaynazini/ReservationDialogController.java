@@ -129,6 +129,10 @@ public class ReservationDialogController {
         qrCodeLabel.setVisible(true);
     }
 
+    private boolean isAddMode() {
+        return reservation == null || reservation.getId() == null;
+    }
+
     private boolean isInputValid() {
         String errorMessage = "";
 
@@ -138,7 +142,7 @@ public class ReservationDialogController {
         
         if (eventDatePicker.getValue() == null) {
             errorMessage += "Event date is required!\n";
-        } else if (eventDatePicker.getValue().isBefore(LocalDate.now())) {
+        } else if (isAddMode() && eventDatePicker.getValue().isBefore(LocalDate.now())) {
             errorMessage += "Event date cannot be in the past!\n";
         }
         
