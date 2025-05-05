@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.example.bouthaina.BackOffice.controllers.DashboardController"
+            stylesheets="@../css/admin.css">
+    <left>
+        <VBox fx:id="sidebarVBox" styleClass="sidebar" prefWidth="200.0" spacing="10.0">
+            <padding>
+                <Insets top="20.0" right="10.0" bottom="20.0" left="10.0"/>
+            </padding>
+            <Label text="ConnectArt Admin" styleClass="sidebar-title">
+                <font>
+                    <Font name="System Bold" size="16.0"/>
+                </font>
+            </Label>
+            <Separator/>
+            <Button fx:id="btnCategories" text="Gestion des Catégories" styleClass="sidebar-btn" 
+                    maxWidth="Infinity" onAction="#handleCategoriesAction"/>
+            <Button fx:id="btnEvenements" text="Gestion des Événements" styleClass="sidebar-btn" 
+                    maxWidth="Infinity" onAction="#handleEvenementsAction"/>
+            <Region VBox.vgrow="ALWAYS"/>
+            <Button text="Déconnexion" styleClass="logout-btn" maxWidth="Infinity"/>
+        </VBox>
+    </left>
+    <center>
+        <StackPane fx:id="contentArea">
+            <!-- Le contenu sera chargé dynamiquement ici -->
+        </StackPane>
+    </center>
+</BorderPane>
