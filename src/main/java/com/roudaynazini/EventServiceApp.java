@@ -8,10 +8,12 @@ import com.roudaynazini.repository.UserRepository;
 import com.roudaynazini.repository.impl.ContractRepositoryImpl;
 import com.roudaynazini.repository.impl.ReservationRepositoryImpl;
 import com.roudaynazini.service.UserService;
+
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
 public class EventServiceApp extends Application {
@@ -41,11 +43,20 @@ public class EventServiceApp extends Application {
         primaryStage.setScene(new Scene(root));
         primaryStage.setMaximized(true);
         
-        // Show the stage first
+        try {
+            Image icon = new Image(getClass().getResourceAsStream("/com/roudaynazini/images/logo.jpg"));
+            if (icon != null) {
+                primaryStage.getIcons().add(icon);
+            }
+        } catch (Exception e) {
+            System.err.println("Could not load application icon: " + e.getMessage());
+        }
+        
+        // Show the stage
         primaryStage.show();
     }
 
     public static void main(String[] args) {
         launch(args);
     }
-} 
+}

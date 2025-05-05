@@ -38,8 +38,11 @@
         <Label text="Reservation QR Code:" GridPane.columnIndex="0" GridPane.rowIndex="5" style="-fx-text-fill: #C71585;" fx:id="qrCodeLabel" visible="false"/>
         <ImageView fx:id="qrCodeImageView" GridPane.columnIndex="1" GridPane.rowIndex="5" fitWidth="150" fitHeight="150" preserveRatio="true" visible="false"/>
 
-        <!-- Show QR Code Button -->
-        <Button fx:id="showQrButton" text="Show QR Code" GridPane.columnSpan="2" GridPane.rowIndex="6" onAction="#handleShowQrCode" style="-fx-background-color: #D8BFD8; -fx-text-fill: #C71585; -fx-font-weight: bold;"/>
+        <!-- Show QR Code and Export to PDF Buttons -->
+        <HBox spacing="10" GridPane.columnSpan="2" GridPane.rowIndex="6">
+            <Button fx:id="showQrButton" text="Show QR Code" onAction="#handleShowQrCode" style="-fx-background-color: #D8BFD8; -fx-text-fill: #C71585; -fx-font-weight: bold;"/>
+            <Button fx:id="exportPdfButton" text="Export to PDF" onAction="#handleExportToPdf" style="-fx-background-color: #D8BFD8; -fx-text-fill: #C71585; -fx-font-weight: bold;"/>
+        </HBox>
 
         <!-- Buttons -->
         <HBox spacing="10" alignment="CENTER_RIGHT" GridPane.columnSpan="2" GridPane.rowIndex="4">

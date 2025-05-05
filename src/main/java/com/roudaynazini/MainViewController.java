@@ -1,5 +1,12 @@
 package com.roudaynazini;
 
+import java.io.File;
+import java.io.IOException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
+import java.util.Optional;
+
 import com.roudaynazini.model.Contract;
 import com.roudaynazini.model.Reservation;
 import com.roudaynazini.model.User;
@@ -8,6 +15,7 @@ import com.roudaynazini.repository.MySQLUserRepository;
 import com.roudaynazini.repository.ReservationRepository;
 import com.roudaynazini.repository.UserRepository;
 import com.roudaynazini.service.UserService;
+
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -15,21 +23,24 @@ import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.DatePicker;
+import javafx.scene.control.PasswordField;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
+import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javafx.scene.Node;
-
-import java.io.IOException;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.util.List;
-import java.util.Optional;
 
 public class MainViewController {
 
@@ -471,15 +482,10 @@ public class MainViewController {
             return;
         }
 
-        // Check if repositories are initialized
-        if (contractRepository == null || reservationRepository == null) {
-            showAlert("Error", "Repositories not initialized. Please try again.");
-            return;
-        }
-
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("contract-dialog.fxml"));
             Parent root = loader.load();
+            
             ContractDialogController controller = loader.getController();
             controller.setContractRepository(contractRepository);
             controller.setReservationRepository(reservationRepository);
@@ -712,6 +718,33 @@ public class MainViewController {
         }
     }
 
+    @FXML
+    private void handleExportContractToPDF() {
+        Contract selectedContract = contractTable.getSelectionModel().getSelectedItem();
+        if (selectedContract == null) {
+            showAlert("No Selection", "Please select a contract to export.");
+            return;
+        }
+
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Save PDF File");
+        fileChooser.getExtensionFilters().add(
+            new FileChooser.ExtensionFilter("PDF Files", "*.pdf")
+        );
+        fileChooser.setInitialFileName("contract_" + selectedContract.getId() + ".pdf");
+
+        File file = fileChooser.showSaveDialog(contractTable.getScene().getWindow());
+        if (file != null) {
+            try {
+                PDFExporter.exportContractToPDF(selectedContract, file.getAbsolutePath());
+                updateStatusBar("Contract exported to PDF successfully");
+            } catch (Exception e) {
+                showAlert("Error", "Failed to export contract: " + e.getMessage());
+                e.printStackTrace();
+            }
+        }
+    }
+
     private void showAlert(String title, String content) {
         Alert alert = new Alert(Alert.AlertType.WARNING);
         alert.setTitle(title);
@@ -852,4 +885,4 @@ public class MainViewController {
     public void setUserService(UserService userService) {
         this.userService = userService;
     }
-} 
+}

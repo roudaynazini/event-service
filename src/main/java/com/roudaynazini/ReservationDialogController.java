@@ -1,24 +1,34 @@
 package com.roudaynazini;
 
-import com.roudaynazini.model.Reservation;
-import com.roudaynazini.repository.ReservationRepository;
-import javafx.fxml.FXML;
-import javafx.scene.control.*;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.stage.Stage;
-import com.google.zxing.BarcodeFormat;
-import com.google.zxing.WriterException;
-import com.google.zxing.qrcode.QRCodeWriter;
-import com.google.zxing.common.BitMatrix;
-import com.google.zxing.client.j2se.MatrixToImageWriter;
+import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
-
 import java.time.LocalDate;
+
+import javax.imageio.ImageIO;
+
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.WriterException;
+import com.google.zxing.client.j2se.MatrixToImageWriter;
+import com.google.zxing.common.BitMatrix;
+import com.google.zxing.qrcode.QRCodeWriter;
+import com.roudaynazini.model.Reservation;
+import com.roudaynazini.repository.ReservationRepository;
+
+import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.DatePicker;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 
 public class ReservationDialogController {
 
@@ -127,6 +137,36 @@ public class ReservationDialogController {
         generateAndShowQrCode(reservation);
         qrCodeImageView.setVisible(true);
         qrCodeLabel.setVisible(true);
+    }
+    
+    @FXML
+    private void handleExportToPdf() {
+        if (reservation == null || reservation.getId() == null) {
+            showError("Export Error", "Please save the reservation before exporting to PDF.");
+            return;
+        }
+        
+        try {
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.setTitle("Save PDF File");
+            fileChooser.getExtensionFilters().add(
+                new FileChooser.ExtensionFilter("PDF Files", "*.pdf"));
+            fileChooser.setInitialFileName("reservation_" + reservation.getId() + ".pdf");
+            
+            File file = fileChooser.showSaveDialog(dialogStage);
+            if (file != null) {
+                PDFExporter.exportReservationToPDF(reservation, file.getAbsolutePath());
+                
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setTitle("Export Successful");
+                alert.setHeaderText(null);
+                alert.setContentText("Reservation has been exported to PDF successfully.");
+                alert.showAndWait();
+            }
+        } catch (IOException e) {
+            showError("Export Error", "Failed to export reservation to PDF: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 
     private boolean isAddMode() {

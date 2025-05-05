@@ -56,8 +56,7 @@
                     </GridPane>
 
                     <HBox spacing="10" alignment="CENTER_RIGHT">
-                        <Button text="Appliquer" onAction="#handleApplyReservationFilters" style="-fx-background-color: #D8BFD8; -fx-text-fill: #C71585; -fx-font-weight: bold;"/>
-                        <Button text="Effacer" onAction="#handleClearReservationFilters" style="-fx-background-color: #D8BFD8; -fx-text-fill: #C71585; -fx-font-weight: bold;"/>
+                        <Button text="Reset Filters" onAction="#handleClearContractFilters" style="-fx-background-color: #D8BFD8; -fx-text-fill: #C71585; -fx-font-weight: bold;"/>
                     </HBox>
                 </VBox>
 
@@ -148,8 +147,7 @@
                     </GridPane>
 
                     <HBox spacing="10" alignment="CENTER_RIGHT">
-                        <Button text="Appliquer" onAction="#handleApplyContractFilters" style="-fx-background-color: #D8BFD8; -fx-text-fill: #C71585; -fx-font-weight: bold;"/>
-                        <Button text="Effacer" onAction="#handleClearContractFilters" style="-fx-background-color: #D8BFD8; -fx-text-fill: #C71585; -fx-font-weight: bold;"/>
+                        <Button text="Reset Filters" onAction="#handleClearContractFilters" style="-fx-background-color: #D8BFD8; -fx-text-fill: #C71585; -fx-font-weight: bold;"/>
                     </HBox>
                 </VBox>
 
@@ -188,4 +186,4 @@
     <HBox spacing="10" alignment="CENTER_LEFT" style="-fx-background-color: #9370DB; -fx-padding: 10; -fx-background-radius: 5;">
         <Text fx:id="statusText" style="-fx-text-fill: #C71585;"/>
     </HBox>
-</VBox> 
+</VBox>

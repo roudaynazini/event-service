@@ -23,7 +23,7 @@
         
         <Label text="Contract Number:" GridPane.columnIndex="0" GridPane.rowIndex="1" style="-fx-text-fill: #C71585;"/>
         <TextField fx:id="contractNumberField" GridPane.columnIndex="1" GridPane.rowIndex="1" GridPane.hgrow="ALWAYS"
-                  style="-fx-background-color: #9370DB; -fx-text-fill: white;"/>
+                  style="-fx-background-color: #9370DB; -fx-text-fill: #C71585;"/>
         
         <Label text="Contract Type:" GridPane.columnIndex="0" GridPane.rowIndex="2" style="-fx-text-fill: #C71585;"/>
         <ComboBox fx:id="contractTypeComboBox" GridPane.columnIndex="1" GridPane.rowIndex="2" GridPane.hgrow="ALWAYS"
@@ -43,11 +43,11 @@
 
         <Label text="Total Amount:" GridPane.columnIndex="0" GridPane.rowIndex="6" style="-fx-text-fill: #C71585;"/>
         <TextField fx:id="totalAmountField" GridPane.columnIndex="1" GridPane.rowIndex="6" GridPane.hgrow="ALWAYS"
-                  style="-fx-background-color: #9370DB; -fx-text-fill: white;"/>
+                  style="-fx-background-color: #9370DB; -fx-text-fill: #C71585;"/>
 
         <Label text="Notes:" GridPane.columnIndex="0" GridPane.rowIndex="7" style="-fx-text-fill: #C71585;"/>
         <TextArea fx:id="notesArea" GridPane.columnIndex="1" GridPane.rowIndex="7" GridPane.hgrow="ALWAYS"
-                 prefRowCount="3" wrapText="true" style="-fx-background-color: #9370DB; -fx-text-fill: white;"/>
+                  style="-fx-control-inner-background: #9775d1; -fx-text-fill: #C71585;" wrapText="true"/>
     </GridPane>
 
     <HBox spacing="10" alignment="CENTER_RIGHT" style="-fx-padding: 10;">
@@ -56,4 +56,4 @@
         <Button text="Cancel" onAction="#handleCancel" cancelButton="true"
                 style="-fx-background-color: #D8BFD8; -fx-text-fill: #C71585; -fx-font-weight: bold;"/>
     </HBox>
-</VBox> 
+</VBox>
