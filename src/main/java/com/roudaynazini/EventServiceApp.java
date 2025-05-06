@@ -27,6 +27,8 @@ public class EventServiceApp extends Application {
         UserRepository userRepository = new MySQLUserRepository();
         ReservationRepository reservationRepository = new ReservationRepositoryImpl();
         ContractRepository contractRepository = new ContractRepositoryImpl();
+        
+        // Initialize services
         UserService userService = new UserService(userRepository);
 
         // Load main view
@@ -36,6 +38,7 @@ public class EventServiceApp extends Application {
         // Get controller and set repositories and services
         MainViewController controller = loader.getController();
         controller.setUserService(userService);
+        controller.setCurrentUser(userRepository.findByUsername("admin")); // Set admin as default user
         controller.setRepositories(reservationRepository, contractRepository, userRepository);
 
         // Set up and show the stage
@@ -45,9 +48,7 @@ public class EventServiceApp extends Application {
         
         try {
             Image icon = new Image(getClass().getResourceAsStream("/com/roudaynazini/images/logo.jpg"));
-            if (icon != null) {
-                primaryStage.getIcons().add(icon);
-            }
+            primaryStage.getIcons().add(icon);
         } catch (Exception e) {
             System.err.println("Could not load application icon: " + e.getMessage());
         }

@@ -5,18 +5,26 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.text.Text?>
 <?import javafx.scene.paint.Color?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 
 <VBox xmlns="http://javafx.com/javafx"
       xmlns:fx="http://javafx.com/fxml"
       fx:controller="com.roudaynazini.MainViewController"
       spacing="10"
-      style="-fx-background-color: #FFF0F5;">
+      style="-fx-background-color: #FFF0F5;"
+      stylesheets="@styles.css">
     <padding>
         <Insets top="20" right="20" bottom="20" left="20"/>
     </padding>
 
     <!-- Top Bar -->
     <HBox spacing="10" alignment="CENTER_LEFT" style="-fx-background-color: #9370DB; -fx-padding: 10; -fx-background-radius: 5;">
+        <ImageView fitHeight="40" fitWidth="40" preserveRatio="true" style="-fx-padding: 0 10 0 0;" >
+            <image>
+                <Image url="@/com/roudaynazini/images/logo.jpg" />
+            </image>
+        </ImageView>
         <Label text="Event Up : Event Planning" style="-fx-font-size: 24px; -fx-text-fill: #C71585; -fx-font-weight: bold;"/>
     </HBox>
 
@@ -72,7 +80,7 @@
                         <Button text="Calendar" onAction="#handleShowCalendar" styleClass="admin-only" style="-fx-background-color: #D8BFD8; -fx-text-fill: #C71585; -fx-font-weight: bold;"/>
                     </HBox>
 
-                    <TableView fx:id="reservationTable" VBox.vgrow="ALWAYS" style="-fx-background-color: transparent;">
+                    <TableView fx:id="reservationTable" VBox.vgrow="ALWAYS">
                         <columnResizePolicy>
                             <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
                         </columnResizePolicy>
@@ -83,43 +91,6 @@
                             <TableColumn fx:id="statusColumn" text="Status" style="-fx-alignment: CENTER;"/>
                             <TableColumn fx:id="notesColumn" text="Notes" style="-fx-alignment: CENTER-LEFT;"/>
                         </columns>
-                        <style>
-                            /* Table header style */
-                            -fx-background-color: white;
-                            -fx-border-color: #9370DB;
-                            -fx-border-width: 1;
-                            -fx-border-radius: 5;
-                            
-                            /* Selected row style */
-                            -fx-selection-bar: #DDA0DD;
-                            -fx-selection-bar-non-focused: #E6E6FA;
-                            
-                            /* Table cell style */
-                            .table-row-cell {
-                                -fx-background-color: transparent;
-                                -fx-border-color: transparent transparent #E6E6FA transparent;
-                                -fx-border-width: 0 0 1 0;
-                            }
-                            
-                            .table-row-cell:selected {
-                                -fx-background-color: #DDA0DD;
-                            }
-                            
-                            .table-row-cell:selected .table-cell {
-                                -fx-text-fill: #4B0082;
-                            }
-                            
-                            /* Column header style */
-                            .column-header {
-                                -fx-background-color: #9370DB;
-                                -fx-text-fill: white;
-                                -fx-font-weight: bold;
-                            }
-                            
-                            .column-header .label {
-                                -fx-text-fill: white;
-                            }
-                        </style>
                     </TableView>
                 </VBox>
             </VBox>
@@ -162,21 +133,21 @@
                         <Button text="Voir Réservation" onAction="#handleViewReservationForContract" style="-fx-background-color: #D8BFD8; -fx-text-fill: #C71585; -fx-font-weight: bold;"/>
                     </HBox>
 
-                    <TableView fx:id="contractTable" VBox.vgrow="ALWAYS" style="-fx-background-color: #F8F0FF;">
+                    <TableView fx:id="contractTable" VBox.vgrow="ALWAYS">
                         <columnResizePolicy>
                             <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
                         </columnResizePolicy>
-        <columns>
-                            <TableColumn fx:id="contractIdColumn" text="ID" style="-fx-background-color: #9370DB; -fx-text-fill: #C71585; -fx-border-width: 0 1 0 0; -fx-border-color: white;"/>
-                            <TableColumn fx:id="contractNumberColumn" text="Numéro" style="-fx-background-color: #9370DB; -fx-text-fill: #C71585; -fx-border-width: 0 1 0 0; -fx-border-color: white;"/>
-                            <TableColumn fx:id="contractTypeColumn" text="Type" style="-fx-background-color: #9370DB; -fx-text-fill: #C71585; -fx-border-width: 0 1 0 0; -fx-border-color: white;"/>
-                            <TableColumn fx:id="contractStatusColumn" text="Statut" style="-fx-background-color: #9370DB; -fx-text-fill: #C71585; -fx-border-width: 0 1 0 0; -fx-border-color: white;"/>
-                            <TableColumn fx:id="contractStartDateColumn" text="Date Début" style="-fx-background-color: #9370DB; -fx-text-fill: #C71585; -fx-border-width: 0 1 0 0; -fx-border-color: white;"/>
-                            <TableColumn fx:id="contractEndDateColumn" text="Date Fin" style="-fx-background-color: #9370DB; -fx-text-fill: #C71585; -fx-border-width: 0 1 0 0; -fx-border-color: white;"/>
-                            <TableColumn fx:id="contractReservationIdColumn" text="ID Réservation" style="-fx-background-color: #9370DB; -fx-text-fill: #C71585; -fx-border-width: 0 1 0 0; -fx-border-color: white;"/>
-                            <TableColumn fx:id="contractTermsColumn" text="Conditions" style="-fx-background-color: #9370DB; -fx-text-fill: #C71585;"/>
-        </columns>
-    </TableView>
+                        <columns>
+                            <TableColumn fx:id="contractIdColumn" text="ID"/>
+                            <TableColumn fx:id="contractNumberColumn" text="Numéro"/>
+                            <TableColumn fx:id="contractTypeColumn" text="Type"/>
+                            <TableColumn fx:id="contractStatusColumn" text="Statut"/>
+                            <TableColumn fx:id="contractStartDateColumn" text="Date Début"/>
+                            <TableColumn fx:id="contractEndDateColumn" text="Date Fin"/>
+                            <TableColumn fx:id="contractReservationIdColumn" text="ID Réservation"/>
+                            <TableColumn fx:id="contractTermsColumn" text="Conditions"/>
+                        </columns>
+                    </TableView>
                 </VBox>
             </VBox>
         </StackPane>

@@ -14,6 +14,7 @@ import com.roudaynazini.repository.ContractRepository;
 import com.roudaynazini.repository.MySQLUserRepository;
 import com.roudaynazini.repository.ReservationRepository;
 import com.roudaynazini.repository.UserRepository;
+import com.roudaynazini.repository.impl.MySQLContractRepository;
 import com.roudaynazini.service.UserService;
 
 import javafx.beans.property.SimpleStringProperty;
@@ -126,9 +127,18 @@ public class MainViewController {
     public void initialize() {
         // Initialize repositories
         userRepository = new MySQLUserRepository();
+        contractRepository = new MySQLContractRepository();
         
         // Create default users if none exist
         createDefaultUser();
+        
+        // Initialize filtered lists
+        filteredReservations = new FilteredList<>(reservationList);
+        filteredContracts = new FilteredList<>(contractList);
+        
+        // Bind filtered lists to tables
+        reservationTable.setItems(filteredReservations);
+        contractTable.setItems(filteredContracts);
         
         // Initialize reservation table columns
         idColumn.setCellValueFactory(cellData -> {
@@ -649,9 +659,17 @@ public class MainViewController {
     @FXML
     private void handleShowContracts() {
         if (currentUser != null && "ADMIN".equals(currentUser.getRole())) {
-            reservationsSection.setVisible(false);
-            contractsSection.setVisible(true);
-            updateStatusBar("Showing Contracts");
+            try {
+                loadContracts();
+                reservationsSection.setVisible(false);
+                contractsSection.setVisible(true);
+                updateStatusBar("Showing Contracts");
+            } catch (Exception e) {
+                updateStatusBar("Error loading contracts: " + e.getMessage());
+                e.printStackTrace();
+            }
+        } else {
+            showAlert("Access Denied", "Only administrators can view contracts.");
         }
     }
 

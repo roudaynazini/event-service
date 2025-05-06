@@ -1,59 +1,25 @@
 package com.roudaynazini.repository.impl;
 
-import java.sql.Connection;
-import java.sql.Date;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import com.roudaynazini.model.Contract;
+import com.roudaynazini.repository.ContractRepository;
+
+import java.sql.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import com.roudaynazini.config.DatabaseConfig;
-import com.roudaynazini.model.Contract;
-import com.roudaynazini.repository.ContractRepository;
-
-public class ContractRepositoryImpl implements ContractRepository {
+public class MySQLContractRepository implements ContractRepository {
     private final Connection connection;
 
-    public ContractRepositoryImpl() {
-        try {
-            this.connection = DatabaseConfig.getConnection();
-            createTableIfNotExists();
-        } catch (SQLException e) {
-            throw new RuntimeException("Failed to initialize ContractRepository", e);
-        }
-    }
-
-    private void createTableIfNotExists() throws SQLException {
-        String createTableSQL = """
-            CREATE TABLE IF NOT EXISTS contracts (
-                id BIGINT PRIMARY KEY AUTO_INCREMENT,
-                reservation_id BIGINT NOT NULL,
-                contract_number VARCHAR(50) NOT NULL UNIQUE,
-                status VARCHAR(20) NOT NULL,
-                start_date DATE NOT NULL,
-                end_date DATE NOT NULL,
-                total_amount DOUBLE NOT NULL,
-                terms TEXT,
-                notes TEXT,
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-                FOREIGN KEY (reservation_id) REFERENCES reservations(id) ON DELETE CASCADE
-            )
-        """;
-
-        try (Statement stmt = connection.createStatement()) {
-            stmt.execute(createTableSQL);
-        }
+    public MySQLContractRepository() {
+        this.connection = DatabaseConnection.getConnection();
     }
 
     @Override
     public Contract save(Contract contract) {
-        String sql = "INSERT INTO contracts (reservation_id, contract_number, status, " +
-                    "start_date, end_date, total_amount, terms, notes) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO contracts (reservation_id, contract_number, contract_type, status, " +
+                    "start_date, end_date, total_amount, terms, notes) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
         
         try (PreparedStatement stmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             setContractParameters(stmt, contract);
@@ -62,7 +28,7 @@ public class ContractRepositoryImpl implements ContractRepository {
             if (affectedRows == 0) {
                 throw new SQLException("Creating contract failed, no rows affected.");
             }
-
+            
             try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
                 if (generatedKeys.next()) {
                     contract.setId(generatedKeys.getLong(1));
@@ -73,7 +39,7 @@ public class ContractRepositoryImpl implements ContractRepository {
             
             return contract;
         } catch (SQLException e) {
-            throw new RuntimeException("Error saving contract: " + e.getMessage(), e);
+            throw new RuntimeException("Error saving contract", e);
         }
     }
 
@@ -83,6 +49,7 @@ public class ContractRepositoryImpl implements ContractRepository {
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setLong(1, id);
             ResultSet rs = stmt.executeQuery();
+            
             if (rs.next()) {
                 return Optional.of(mapResultSetToContract(rs));
             }
@@ -219,12 +186,13 @@ public class ContractRepositoryImpl implements ContractRepository {
     private void setContractParameters(PreparedStatement stmt, Contract contract) throws SQLException {
         stmt.setLong(1, contract.getReservationId());
         stmt.setString(2, contract.getContractNumber());
-        stmt.setString(3, contract.getStatus());
-        stmt.setDate(4, Date.valueOf(contract.getStartDate()));
-        stmt.setDate(5, Date.valueOf(contract.getEndDate()));
-        stmt.setDouble(6, contract.getTotalAmount());
-        stmt.setString(7, contract.getTerms() != null ? contract.getTerms() : "");
-        stmt.setString(8, contract.getNotes() != null ? contract.getNotes() : "");
+        stmt.setString(3, contract.getContractType());
+        stmt.setString(4, contract.getStatus());
+        stmt.setDate(5, Date.valueOf(contract.getStartDate()));
+        stmt.setDate(6, Date.valueOf(contract.getEndDate()));
+        stmt.setDouble(7, contract.getTotalAmount());
+        stmt.setString(8, contract.getTerms() != null ? contract.getTerms() : "");
+        stmt.setString(9, contract.getNotes() != null ? contract.getNotes() : "");
     }
 
     private Contract mapResultSetToContract(ResultSet rs) throws SQLException {
@@ -232,7 +200,7 @@ public class ContractRepositoryImpl implements ContractRepository {
         contract.setId(rs.getLong("id"));
         contract.setReservationId(rs.getLong("reservation_id"));
         contract.setContractNumber(rs.getString("contract_number"));
-        contract.setContractType(contract.getContractNumber().substring(0, 3)); // Derive type from contract number prefix
+        contract.setContractType(rs.getString("contract_type"));
         contract.setStatus(rs.getString("status"));
         contract.setStartDate(rs.getDate("start_date").toLocalDate());
         contract.setEndDate(rs.getDate("end_date").toLocalDate());
@@ -241,4 +209,4 @@ public class ContractRepositoryImpl implements ContractRepository {
         contract.setNotes(rs.getString("notes"));
         return contract;
     }
-}
+} 

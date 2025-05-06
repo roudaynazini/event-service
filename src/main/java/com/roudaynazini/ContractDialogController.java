@@ -1,15 +1,38 @@
 package com.roudaynazini;
 
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Optional;
+
 import com.roudaynazini.model.Contract;
 import com.roudaynazini.model.Reservation;
 import com.roudaynazini.repository.ContractRepository;
 import com.roudaynazini.repository.ReservationRepository;
+
 import javafx.fxml.FXML;
-import javafx.scene.control.*;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.DatePicker;
+import javafx.scene.control.ListCell;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 import javafx.stage.Stage;
-import java.time.LocalDate;
-import java.util.List;
-import java.util.Optional;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.stage.FileChooser;
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.WriterException;
+import com.google.zxing.qrcode.QRCodeWriter;
+import com.google.zxing.common.BitMatrix;
+import com.google.zxing.client.j2se.MatrixToImageWriter;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import javax.imageio.ImageIO;
+import java.io.File;
+import com.roudaynazini.PDFExporter;
 
 public class ContractDialogController {
 
@@ -29,6 +52,14 @@ public class ContractDialogController {
     private TextField totalAmountField;
     @FXML
     private TextArea notesArea;
+    @FXML
+    private ImageView qrCodeImageView;
+    @FXML
+    private Button showQrButton;
+    @FXML
+    private Button exportPdfButton;
+    @FXML
+    private Label qrCodeLabel;
 
     private ContractRepository contractRepository;
     private ReservationRepository reservationRepository;
@@ -158,11 +189,12 @@ public class ContractDialogController {
             contract.setEndDate(endDatePicker.getValue());
             contract.setTotalAmount(Double.parseDouble(totalAmountField.getText()));
             contract.setNotes(notesArea.getText());
+            
             try {
                 if (contract.getId() == null || contract.getId() == 0) {
-                    contractRepository.save(contract);
+                    contract = contractRepository.save(contract);
                 } else {
-                    contractRepository.update(contract);
+                    contract = contractRepository.update(contract);
                 }
                 okClicked = true;
                 dialogStage.close();
@@ -224,4 +256,67 @@ public class ContractDialogController {
         alert.setContentText(content);
         alert.showAndWait();
     }
-} 
+
+    @FXML
+    private void handleShowQrCode() {
+        generateAndShowQrCode(contract);
+        qrCodeImageView.setVisible(true);
+        qrCodeLabel.setVisible(true);
+    }
+
+    private void generateAndShowQrCode(Contract contract) {
+        if (contract == null) {
+            qrCodeImageView.setImage(null);
+            return;
+        }
+        String qrContent = "Contract ID: " + contract.getId() + "\nNumber: " + contract.getContractNumber() + "\nType: " + contract.getContractType();
+        QRCodeWriter qrCodeWriter = new QRCodeWriter();
+        try {
+            BitMatrix bitMatrix = qrCodeWriter.encode(qrContent, BarcodeFormat.QR_CODE, 150, 150);
+            BufferedImage bufferedImage = MatrixToImageWriter.toBufferedImage(bitMatrix);
+            ByteArrayOutputStream os = new ByteArrayOutputStream();
+            ImageIO.write(bufferedImage, "png", os);
+            ByteArrayInputStream is = new ByteArrayInputStream(os.toByteArray());
+            Image fxImage = new Image(is);
+            qrCodeImageView.setImage(fxImage);
+        } catch (WriterException | java.io.IOException e) {
+            qrCodeImageView.setImage(null);
+        }
+    }
+
+    private void showInfo(String title, String content) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(content);
+        alert.showAndWait();
+    }
+
+    @FXML
+    private void handleExportToPdf() {
+        if (contract == null) {
+            showError("No Contract", "No contract to export.");
+            return;
+        }
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Save PDF File");
+        fileChooser.getExtensionFilters().add(
+            new FileChooser.ExtensionFilter("PDF Files", "*.pdf")
+        );
+        fileChooser.setInitialFileName("contract_" + contract.getId() + ".pdf");
+        File file = fileChooser.showSaveDialog(dialogStage);
+        if (file != null) {
+            try {
+                // Generate QR code as BufferedImage
+                String qrContent = "Contract ID: " + contract.getId() + "\nNumber: " + contract.getContractNumber() + "\nType: " + contract.getContractType();
+                QRCodeWriter qrCodeWriter = new QRCodeWriter();
+                BitMatrix bitMatrix = qrCodeWriter.encode(qrContent, BarcodeFormat.QR_CODE, 150, 150);
+                BufferedImage bufferedImage = MatrixToImageWriter.toBufferedImage(bitMatrix);
+                PDFExporter.exportContractToPDF(contract, file.getAbsolutePath(), bufferedImage);
+                showInfo("Success", "Contract exported to PDF successfully.");
+            } catch (Exception e) {
+                showError("Error", "Failed to export contract: " + e.getMessage());
+            }
+        }
+    }
+}

@@ -1,7 +1,9 @@
 package com.roudaynazini;
 
+import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.awt.image.BufferedImage;
 
 import com.itextpdf.io.image.ImageData;
 import com.itextpdf.io.image.ImageDataFactory;
@@ -74,6 +76,52 @@ public class PDFExporter {
             table.addCell("Notes");
             table.addCell(reservation.getNotes() != null ? reservation.getNotes() : "N/A");
             document.add(table);
+        }
+    }
+
+    // Overloaded method to support QR code
+    public static void exportContractToPDF(Contract contract, String filePath, BufferedImage qrCodeImage) throws IOException {
+        if (qrCodeImage == null) {
+            exportContractToPDF(contract, filePath);
+            return;
+        }
+        try (PdfWriter writer = new PdfWriter(new FileOutputStream(filePath));
+             PdfDocument pdf = new PdfDocument(writer);
+             Document document = new Document(pdf)) {
+
+            // Add header with logo and app name
+            addHeader(document);
+
+            // Add contract details
+            document.add(new Paragraph("Contract Details").setBold().setFontSize(14));
+            Table table = new Table(2);
+            table.addCell("Contract ID");
+            table.addCell(String.valueOf(contract.getId()));
+            table.addCell("Contract Number");
+            table.addCell(contract.getContractNumber());
+            table.addCell("Type");
+            table.addCell(contract.getContractType());
+            table.addCell("Status");
+            table.addCell(contract.getStatus());
+            table.addCell("Start Date");
+            table.addCell(contract.getStartDate() != null ? contract.getStartDate().toString() : "N/A");
+            table.addCell("End Date");
+            table.addCell(contract.getEndDate() != null ? contract.getEndDate().toString() : "N/A");
+            table.addCell("Total Amount");
+            table.addCell(String.valueOf(contract.getTotalAmount()));
+            table.addCell("Notes");
+            table.addCell(contract.getNotes() != null ? contract.getNotes() : "N/A");
+            document.add(table);
+
+            // Add QR code if present
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            javax.imageio.ImageIO.write(qrCodeImage, "png", baos);
+            ImageData qrImageData = ImageDataFactory.create(baos.toByteArray());
+            Image qrImage = new Image(qrImageData);
+            qrImage.setHorizontalAlignment(HorizontalAlignment.CENTER);
+            qrImage.setAutoScale(true);
+            document.add(new Paragraph("\nContract QR Code:").setBold().setTextAlignment(TextAlignment.CENTER));
+            document.add(qrImage);
         }
     }
 

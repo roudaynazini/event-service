@@ -14,12 +14,13 @@ public class Contract {
     private String terms;
     private String notes;
 
+
     // Default constructor
     public Contract() {}
 
     // Constructor with all fields
     public Contract(Long id, String contractNumber, String contractType, String status, LocalDate startDate, 
-                   LocalDate endDate, Long reservationId, Double totalAmount, String terms, String notes) {
+                   LocalDate endDate, Long reservationId, double totalAmount, String terms, String notes) {
         this.id = id;
         this.contractNumber = contractNumber;
         this.contractType = contractType;
@@ -39,6 +40,14 @@ public class Contract {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Long getReservationId() {
+        return reservationId;
+    }
+
+    public void setReservationId(Long reservationId) {
+        this.reservationId = reservationId;
     }
 
     public String getContractNumber() {
@@ -81,15 +90,7 @@ public class Contract {
         this.endDate = endDate;
     }
 
-    public Long getReservationId() {
-        return reservationId;
-    }
-
-    public void setReservationId(Long reservationId) {
-        this.reservationId = reservationId;
-    }
-
-    public Double getTotalAmount() {
+    public double getTotalAmount() {
         return totalAmount;
     }
 
@@ -128,4 +129,4 @@ public class Contract {
                 ", notes='" + notes + '\'' +
                 '}';
     }
-} 
+}
