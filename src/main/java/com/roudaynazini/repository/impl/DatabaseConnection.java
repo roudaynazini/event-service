@@ -71,6 +71,14 @@ public class DatabaseConnection {
                 "email VARCHAR(100) NOT NULL, " +
                 "role VARCHAR(20) NOT NULL" +
                 ")");
+
+            // Create notifications table
+            stmt.execute("CREATE TABLE IF NOT EXISTS notifications (" +
+                "id BIGINT AUTO_INCREMENT PRIMARY KEY, " +
+                "message TEXT NOT NULL, " +
+                "created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, " +
+                "is_read BOOLEAN DEFAULT FALSE" +
+                ")");
         }
     }
 } 

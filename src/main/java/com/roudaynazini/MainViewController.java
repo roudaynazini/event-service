@@ -16,6 +16,8 @@ import com.roudaynazini.repository.ReservationRepository;
 import com.roudaynazini.repository.UserRepository;
 import com.roudaynazini.repository.impl.MySQLContractRepository;
 import com.roudaynazini.service.UserService;
+import com.roudaynazini.repository.NotificationRepository;
+import com.roudaynazini.repository.impl.NotificationRepositoryImpl;
 
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
@@ -32,6 +34,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
+import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -42,6 +46,17 @@ import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.scene.shape.Circle;
+import javafx.stage.Popup;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.StackPane;
+import javafx.scene.chart.PieChart;
+import javafx.scene.chart.BarChart;
+import javafx.scene.chart.XYChart;
+import javafx.scene.chart.CategoryAxis;
+import javafx.scene.chart.NumberAxis;
+import javafx.scene.paint.Color;
+import javafx.scene.control.Tooltip;
 
 public class MainViewController {
 
@@ -122,6 +137,30 @@ public class MainViewController {
 
     @FXML
     private VBox menuVBox;
+
+    @FXML
+    private ListView<String> notificationListView;
+    @FXML
+    private VBox notificationBox;
+
+    @FXML
+    private StackPane notificationIconPane;
+    @FXML
+    private ImageView notificationBell;
+    @FXML
+    private Circle notificationBadge;
+    @FXML
+    private Label notificationBadgeLabel;
+
+    private int unreadNotifications = 0;
+    private final ObservableList<String> notifications = FXCollections.observableArrayList();
+
+    @FXML
+    private PieChart reservationPieChart;
+    @FXML
+    private BarChart<String, Number> reservationBarChart;
+
+    private NotificationRepository notificationRepository = new NotificationRepositoryImpl();
 
     @FXML
     public void initialize() {
@@ -224,6 +263,11 @@ public class MainViewController {
                 updateUIForUserRole();
             }
         });
+
+        if (notificationIconPane != null) {
+            notificationIconPane.setOnMouseClicked(event -> showNotificationPopup());
+        }
+        updateNotificationBadge();
     }
 
     private void createDefaultUser() {
@@ -320,18 +364,41 @@ public class MainViewController {
     }
 
     private void updateReservationFilters() {
-        String searchText = reservationSearchField.getText().toLowerCase();
-        String selectedStatus = reservationStatusFilter.getValue();
-        LocalDate selectedDate = reservationDateFilter.getValue();
+        final String searchText = reservationSearchField.getText().toLowerCase();
+        final String selectedStatus = reservationStatusFilter.getValue();
+        final LocalDate selectedDate = reservationDateFilter.getValue();
+        
+        // Map French status to English
+        final String englishStatus;
+        if (selectedStatus != null) {
+            switch (selectedStatus) {
+                case "En attente":
+                    englishStatus = "Pending";
+                    break;
+                case "Confirmé":
+                    englishStatus = "Confirmed";
+                    break;
+                case "Annulé":
+                    englishStatus = "Cancelled";
+                    break;
+                case "Terminé":
+                    englishStatus = "Completed";
+                    break;
+                default:
+                    englishStatus = null;
+            }
+        } else {
+            englishStatus = null;
+        }
         
         filteredReservations.setPredicate(reservation -> {
             boolean matchesSearch = searchText.isEmpty() ||
                 reservation.getClientName().toLowerCase().contains(searchText) ||
                 String.valueOf(reservation.getId()).contains(searchText);
                 
-            boolean matchesStatus = selectedStatus == null || 
-                selectedStatus.isEmpty() || 
-                reservation.getStatus().equals(selectedStatus);
+            boolean matchesStatus = englishStatus == null || 
+                englishStatus.isEmpty() || 
+                reservation.getStatus().equals(englishStatus);
                 
             boolean matchesDate = selectedDate == null ||
                 reservation.getEventDate().equals(selectedDate);
@@ -343,18 +410,41 @@ public class MainViewController {
     private void updateContractFilters() {
         if (filteredContracts == null) return;
         
-        String searchText = contractSearchField.getText().toLowerCase();
-        String selectedType = contractTypeFilter.getValue();
-        String selectedStatus = contractStatusFilter.getValue();
+        final String searchText = contractSearchField.getText().toLowerCase();
+        final String selectedType = contractTypeFilter.getValue();
+        final String selectedStatus = contractStatusFilter.getValue();
+        
+        // Map French contract type to English
+        final String englishType;
+        if (selectedType != null) {
+            switch (selectedType) {
+                case "Standard":
+                    englishType = "STD";
+                    break;
+                case "Premium":
+                    englishType = "PRM";
+                    break;
+                case "VIP":
+                    englishType = "VIP";
+                    break;
+                case "Personnalisé":
+                    englishType = "CST";
+                    break;
+                default:
+                    englishType = null;
+            }
+        } else {
+            englishType = null;
+        }
         
         filteredContracts.setPredicate(contract -> {
             // Search text filter
-            boolean matchesSearch = searchText == null || searchText.isEmpty() ||
+            boolean matchesSearch = searchText.isEmpty() ||
                                   contract.getContractNumber().toLowerCase().contains(searchText);
             
             // Type filter
-            boolean matchesType = selectedType == null || selectedType.isEmpty() ||
-                                contract.getContractType().equals(selectedType);
+            boolean matchesType = englishType == null || englishType.isEmpty() ||
+                                contract.getContractType().equals(englishType);
             
             // Status filter
             boolean matchesStatus = selectedStatus == null || selectedStatus.isEmpty() ||
@@ -372,11 +462,17 @@ public class MainViewController {
 
     @FXML
     private void handleClearReservationFilters() {
+        // Clear all filter fields
         reservationSearchField.clear();
         reservationStatusFilter.setValue(null);
-        reservationStatusFilter.setPromptText("Filter by status");
         reservationDateFilter.setValue(null);
-        updateReservationFilters();
+        
+        // Reset the filtered list to show all items
+        filteredReservations.setPredicate(reservation -> true);
+        
+        // Reload the data to ensure we have the latest state
+        loadReservations();
+        
         updateStatusBar("Reservation filters cleared");
     }
 
@@ -411,6 +507,8 @@ public class MainViewController {
             ReservationDialogController controller = loader.getController();
             controller.setReservationRepository(reservationRepository);
             controller.setDialogStage(dialogStage);
+            controller.setCurrentUser(currentUser);
+            controller.setMainViewController(this);
 
             // Show the dialog and wait for it to close
             dialogStage.showAndWait();
@@ -709,30 +807,47 @@ public class MainViewController {
             return;
         }
 
-        // Check if repository is initialized
-        if (reservationRepository == null) {
-            showAlert("Error", "Reservation repository is not initialized.");
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("calendar-view.fxml"));
+            Parent root = loader.load();
+            CalendarViewController controller = loader.getController();
+            controller.setReservationRepository(reservationRepository);
+            
+            Stage dialogStage = new Stage();
+            dialogStage.setTitle("Reservation Calendar");
+            dialogStage.initModality(Modality.WINDOW_MODAL);
+            dialogStage.initOwner(reservationTable.getScene().getWindow());
+            dialogStage.setScene(new Scene(root));
+            dialogStage.showAndWait();
+        } catch (IOException e) {
+            e.printStackTrace();
+            showAlert("Error", "Could not load the calendar view: " + e.getMessage());
+        }
+    }
+
+    @FXML
+    private void handleShowStatistics() {
+        if (currentUser == null || !"ADMIN".equals(currentUser.getRole())) {
+            showAlert("Access Denied", "Only administrators can access the statistics view.");
             return;
         }
 
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("calendar-view.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("statistics-view.fxml"));
             Parent root = loader.load();
-
-            CalendarViewController controller = loader.getController();
+            StatisticsViewController controller = loader.getController();
             controller.setReservationRepository(reservationRepository);
-
-            Stage calendarStage = new Stage();
-            calendarStage.setTitle("Reservation Calendar");
-            calendarStage.initModality(Modality.WINDOW_MODAL);
-            calendarStage.initOwner(reservationTable.getScene().getWindow());
-
-            Scene scene = new Scene(root);
-            calendarStage.setScene(scene);
-            calendarStage.show();
+            
+            Stage dialogStage = new Stage();
+            dialogStage.setTitle("Reservation Statistics");
+            dialogStage.initModality(Modality.WINDOW_MODAL);
+            dialogStage.initOwner(reservationTable.getScene().getWindow());
+            dialogStage.setScene(new Scene(root));
+            controller.setDialogStage(dialogStage);
+            dialogStage.showAndWait();
         } catch (IOException e) {
             e.printStackTrace();
-            showAlert("Error", "Could not load the calendar view: " + e.getMessage());
+            showAlert("Error", "Could not load the statistics view: " + e.getMessage());
         }
     }
 
@@ -780,6 +895,10 @@ public class MainViewController {
     public void setCurrentUser(User user) {
         this.currentUser = user;
         updateUIForUserRole();
+        // Load notifications for admin
+        if (currentUser != null && "ADMIN".equals(currentUser.getRole())) {
+            loadAdminNotifications();
+        }
     }
 
     private void updateUIForUserRole() {
@@ -787,6 +906,7 @@ public class MainViewController {
             // Hide all sections if no user is logged in
             reservationsSection.setVisible(false);
             contractsSection.setVisible(false);
+            if (notificationIconPane != null) notificationIconPane.setVisible(false);
             return;
         }
 
@@ -821,6 +941,16 @@ public class MainViewController {
         
         // Update status bar
         updateStatusBar("Logged in as: " + currentUser.getUsername() + " (" + currentUser.getRole() + ")");
+
+        // Show/hide notification icon based on admin role
+        if (notificationIconPane != null) {
+            notificationIconPane.setVisible(isAdmin);
+            notificationIconPane.setManaged(isAdmin);
+            if (!isAdmin) {
+                unreadNotifications = 0;
+                updateNotificationBadge();
+            }
+        }
     }
 
     private void generateContractForReservation(Reservation reservation) {
@@ -902,5 +1032,47 @@ public class MainViewController {
 
     public void setUserService(UserService userService) {
         this.userService = userService;
+    }
+
+    public void addNotification(String message) {
+        notificationRepository.addNotification(message);
+        if (currentUser != null && "ADMIN".equals(currentUser.getRole())) {
+            notifications.add(0, message);
+            unreadNotifications++;
+            updateNotificationBadge();
+        }
+    }
+
+    private void updateNotificationBadge() {
+        if (notificationBadge != null && notificationBadgeLabel != null) {
+            boolean hasUnread = unreadNotifications > 0;
+            notificationBadge.setVisible(hasUnread);
+            notificationBadgeLabel.setVisible(hasUnread);
+            notificationBadgeLabel.setText(String.valueOf(unreadNotifications));
+        }
+    }
+
+    private void showNotificationPopup() {
+        if (currentUser == null || !"ADMIN".equals(currentUser.getRole())) {
+            return;
+        }
+        ListView<String> popupList = new ListView<>(notifications);
+        popupList.setPrefWidth(300);
+        popupList.setPrefHeight(200);
+        Popup popup = new Popup();
+        popup.getContent().add(popupList);
+        popup.setAutoHide(true);
+        popup.show(notificationIconPane.getScene().getWindow());
+        unreadNotifications = 0;
+        updateNotificationBadge();
+        notificationRepository.markAllAsRead();
+    }
+
+    private void loadAdminNotifications() {
+        notifications.clear();
+        List<String> dbNotifications = notificationRepository.getUnreadNotifications();
+        notifications.addAll(dbNotifications);
+        unreadNotifications = dbNotifications.size();
+        updateNotificationBadge();
     }
 }

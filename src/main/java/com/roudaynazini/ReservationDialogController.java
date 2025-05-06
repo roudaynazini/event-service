@@ -15,7 +15,10 @@ import com.google.zxing.client.j2se.MatrixToImageWriter;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
 import com.roudaynazini.model.Reservation;
+import com.roudaynazini.model.User;
 import com.roudaynazini.repository.ReservationRepository;
+import com.roudaynazini.service.SmsService;
+import com.roudaynazini.MainViewController;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
@@ -55,6 +58,8 @@ public class ReservationDialogController {
     private Stage dialogStage;
     private Reservation reservation;
     private boolean okClicked = false;
+    private User currentUser;
+    private MainViewController mainViewController;
 
     @FXML
     private void initialize() {
@@ -106,18 +111,36 @@ public class ReservationDialogController {
                 reservation = new Reservation();
                 reservation.setCreatedAt(LocalDate.now());
             }
-            
             reservation.setClientName(clientNameField.getText());
             reservation.setEventDate(eventDatePicker.getValue());
             reservation.setStatus(statusComboBox.getValue());
             reservation.setNotes(notesArea.getText());
             reservation.setUpdatedAt(LocalDate.now());
-
             try {
-                if (reservation.getId() == null) {
+                boolean isNew = reservation.getId() == null;
+                if (isNew) {
                     reservationRepository.save(reservation);
                 } else {
                     reservationRepository.update(reservation);
+                }
+                if (isNew) {
+                    // Always notify admin in-app
+                    if (mainViewController != null) {
+                        String who = (currentUser != null) ? currentUser.getUsername() : "Unknown";
+                        mainViewController.addNotification("User " + who + " added a reservation for " + reservation.getClientName());
+                    }
+                    // Optionally, only send SMS to admin if not admin
+                    if (currentUser != null && !"ADMIN".equalsIgnoreCase(currentUser.getRole())) {
+                        StringBuilder sms = new StringBuilder();
+                        sms.append("A new reservation was added by user: ").append(currentUser.getUsername()).append("\n");
+                        sms.append("Client: ").append(reservation.getClientName()).append("\n");
+                        sms.append("Date: ").append(reservation.getEventDate()).append("\n");
+                        sms.append("Status: ").append(reservation.getStatus()).append("\n");
+                        if (reservation.getNotes() != null && !reservation.getNotes().isEmpty()) {
+                            sms.append("Notes: ").append(reservation.getNotes());
+                        }
+                        SmsService.sendSms("+21621355366", sms.toString());
+                    }
                 }
                 okClicked = true;
                 dialogStage.close();
@@ -175,21 +198,17 @@ public class ReservationDialogController {
 
     private boolean isInputValid() {
         String errorMessage = "";
-
         if (clientNameField.getText() == null || clientNameField.getText().trim().isEmpty()) {
             errorMessage += "Client name is required!\n";
         }
-        
         if (eventDatePicker.getValue() == null) {
             errorMessage += "Event date is required!\n";
         } else if (isAddMode() && eventDatePicker.getValue().isBefore(LocalDate.now())) {
             errorMessage += "Event date cannot be in the past!\n";
         }
-        
         if (statusComboBox.getValue() == null) {
             errorMessage += "Status is required!\n";
         }
-
         if (errorMessage.length() == 0) {
             return true;
         } else {
@@ -228,5 +247,13 @@ public class ReservationDialogController {
 
     public Reservation getReservation() {
         return reservation;
+    }
+
+    public void setCurrentUser(User user) {
+        this.currentUser = user;
+    }
+
+    public void setMainViewController(MainViewController mainViewController) {
+        this.mainViewController = mainViewController;
     }
 }

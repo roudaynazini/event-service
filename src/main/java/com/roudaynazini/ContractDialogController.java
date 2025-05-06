@@ -8,6 +8,7 @@ import com.roudaynazini.model.Contract;
 import com.roudaynazini.model.Reservation;
 import com.roudaynazini.repository.ContractRepository;
 import com.roudaynazini.repository.ReservationRepository;
+import com.roudaynazini.service.SmsService;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
@@ -191,10 +192,15 @@ public class ContractDialogController {
             contract.setNotes(notesArea.getText());
             
             try {
-                if (contract.getId() == null || contract.getId() == 0) {
+                boolean isNew = contract.getId() == null || contract.getId() == 0;
+                if (isNew) {
                     contract = contractRepository.save(contract);
                 } else {
                     contract = contractRepository.update(contract);
+                }
+                if (isNew) {
+                    // Send SMS after adding a new contract
+                    SmsService.sendSms("+21621355366", "A new contract has been added: " + contract.getContractNumber());
                 }
                 okClicked = true;
                 dialogStage.close();

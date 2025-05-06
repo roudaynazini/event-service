@@ -7,6 +7,11 @@
 <?import javafx.scene.paint.Color?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
+<?import javafx.scene.shape.Circle?>
+<?import javafx.scene.chart.PieChart?>
+<?import javafx.scene.chart.BarChart?>
+<?import javafx.scene.chart.CategoryAxis?>
+<?import javafx.scene.chart.NumberAxis?>
 
 <VBox xmlns="http://javafx.com/javafx"
       xmlns:fx="http://javafx.com/fxml"
@@ -26,6 +31,16 @@
             </image>
         </ImageView>
         <Label text="Event Up : Event Planning" style="-fx-font-size: 24px; -fx-text-fill: #C71585; -fx-font-weight: bold;"/>
+        <Pane HBox.hgrow="ALWAYS"/>
+        <StackPane fx:id="notificationIconPane" style="-fx-cursor: hand;" alignment="CENTER_RIGHT">
+            <ImageView fx:id="notificationBell" fitHeight="28" fitWidth="28" preserveRatio="true">
+                <image>
+                    <Image url="@/com/roudaynazini/images/bellicon.png" />
+                </image>
+            </ImageView>
+            <Circle fx:id="notificationBadge" radius="8" fill="red" visible="false" StackPane.alignment="TOP_RIGHT"/>
+            <Label fx:id="notificationBadgeLabel" text="1" textFill="white" style="-fx-font-size: 10px;" visible="false" StackPane.alignment="TOP_RIGHT"/>
+        </StackPane>
     </HBox>
 
     <!-- Main Content Area -->
@@ -78,6 +93,7 @@
                         <Button text="Supprimer" onAction="#handleDeleteReservation" style="-fx-background-color: #D8BFD8; -fx-text-fill: #C71585; -fx-font-weight: bold;"/>
                         <Button text="Voir Contrats" onAction="#handleViewContractsForReservation" styleClass="admin-only" style="-fx-background-color: #D8BFD8; -fx-text-fill: #C71585; -fx-font-weight: bold;"/>
                         <Button text="Calendar" onAction="#handleShowCalendar" styleClass="admin-only" style="-fx-background-color: #D8BFD8; -fx-text-fill: #C71585; -fx-font-weight: bold;"/>
+                        <Button text="Statistics" onAction="#handleShowStatistics" styleClass="admin-only" style="-fx-background-color: #D8BFD8; -fx-text-fill: #C71585; -fx-font-weight: bold;"/>
                     </HBox>
 
                     <TableView fx:id="reservationTable" VBox.vgrow="ALWAYS">
