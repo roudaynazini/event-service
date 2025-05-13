@@ -1,0 +1,271 @@
+/* Style général de l'interface */
+.container {
+    background: -webkit-linear-gradient(135deg, #9c4dcc, #e1bee7);  /* Dégradé mauve lilas pour Webkit */
+    background: -moz-linear-gradient(135deg, #9c4dcc, #e1bee7);  /* Dégradé mauve lilas pour Firefox */
+    background: linear-gradient(135deg, #9c4dcc, #e1bee7); /* Dégradé standard */
+    padding: 20px;
+    border-radius: 20px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+/* Titre */
+.titleLabel {
+    font-size: 28px;
+    font-weight: bold;  /* Texte en gras */
+    color: white;
+    text-align: center;  /* Centré horizontalement */
+    margin-bottom: 20px;
+}
+
+/* Barre de progression */
+.progressBarContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.progressLabel {
+    color: white;
+    font-size: 18px;
+    margin-right: 10px;
+}
+
+.progressBar {
+    -fx-accent: #9c4dcc;  /* Couleur mauve pour la barre */
+    -fx-background-color: #e1bee7;  /* Fond clair mauve lilas */
+}
+
+/* TableView des badges */
+.badgeTable {
+    -fx-background-color: rgba(255, 255, 255, 0.9);
+    -fx-border-radius: 15px;
+    -fx-border-color: #9c4dcc;  /* Mauve lilas */
+    -fx-border-width: 2px;
+    -fx-selection-bar: #e1bee7;  /* Selection en lilas doux */
+}
+
+/* Container d'icônes de badges */
+.iconBadgeContainer {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.badgeIcon {
+    background-color: #ffffff;
+    border-radius: 50%;
+    padding: 15px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+    cursor: pointer;
+    transition: transform 0.3s ease, background-color 0.3s ease;
+}
+
+.badgeIcon:hover {
+    transform: scale(1.2);
+    background-color: #e1bee7;  /* Effet au survol */
+}
+
+/* Titre en gras et centré */
+.titleLabel {
+    font-size: 28px;
+    font-weight: bold;
+    color: white;
+    text-align: center; /* Centre le texte */
+}
+
+/* Message de félicitations */
+.congratulationsMessage {
+    font-size: 20px;
+    font-weight: bold; /* Texte en gras */
+    color: #9c4dcc; /* Mauve lilas */
+    text-align: center; /* Centré horizontalement */
+}
+/* En-têtes de colonnes dans la TableView */
+.table-view .column-header-background {
+    -fx-background-color: #d1a3e0; /* Couleur mauve claire */
+    -fx-border-radius: 15px 15px 0 0;
+    -fx-padding: 10px;
+}
+
+.table-view .column-header {
+    -fx-font-weight: bold;
+    -fx-font-size: 14px;
+    -fx-text-fill: white;
+}
+
+/* Style des cellules */
+.table-view .cell {
+    -fx-font-size: 13px;
+    -fx-text-fill: #333;
+    -fx-alignment: center-left;
+    -fx-padding: 8px;
+}
+
+/* Colonnes spécifiques : attribution et critère */
+.dateAttributionColumn, .critereColumn {
+    -fx-font-style: italic;
+    -fx-text-fill: #6a1b9a;
+}
+
+
+/* Styles globaux pour les boutons */
+.button-style, .sidebar-button {
+    -fx-background-color: linear-gradient(to bottom, #D8A7F5, #9B3DA0);
+    -fx-text-fill: white;
+    -fx-padding: 10px 20px;
+    -fx-font-size: 16px;
+    -fx-border-radius: 12px;
+    -fx-min-width: 200px;
+    -fx-max-width: 250px;
+}
+
+/* Hover & pressed pour boutons */
+.button-style:hover, .sidebar-button:hover {
+    -fx-background-color: linear-gradient(to bottom, #9B3DA0, #D8A7F5);
+}
+
+
+
+/* Style du menu latéral ou fond général */
+.vbox-sidebar {
+    -fx-background-color: linear-gradient(to bottom, #8e44ad, #c39bd3);
+    -fx-padding: 30;
+    -fx-background-radius: 0 10 10 0;
+    -fx-spacing: 25;
+    -fx-alignment: top-center;
+}
+
+/* Titre principal */
+.label-title {
+    -fx-font-size: 22px;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+}
+
+/* Label normal type formulaire */
+.label-form {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #1a1a1a;
+}
+
+/* TextField de recherche ou formulaire */
+.textfield-search, .textfield-form {
+    -fx-background-color: #f8f9fd;
+    -fx-text-fill: #1a1a1a;
+    -fx-border-radius: 8px;
+    -fx-padding: 12px 20px;
+}
+
+/* TableView */
+.table-view {
+    -fx-background-color: #ffffff;
+    -fx-text-fill: #1a1a1a;
+    -fx-border-radius: 10px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.1), 5, 0, 0, 10);
+}
+
+.table-view .column-header {
+    -fx-font-weight: bold;
+    -fx-font-size: 14px;
+    -fx-background-color: #f1f1f1;
+}
+
+/* ProgressBar stylée */
+.progressBar {
+    -fx-accent: #9B3DA0;
+}
+
+/* Badge icône (StackPane) */
+.badgeIcon {
+    -fx-background-color: white;
+    -fx-background-radius: 50%;
+    -fx-padding: 10;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 5, 0, 0, 4);
+}
+
+/* Message de félicitations */
+.congratulationsMessage {
+    -fx-font-size: 14px;
+    -fx-text-fill: green;
+    -fx-font-weight: bold;
+    -fx-padding: 10 0 0 20;
+}
+/* Couleur de fond globale */
+.root, .anchor-pane {
+    -fx-background-color: #f0f4f7;
+}
+
+/* Bouton spécifique Like */
+#likeButton {
+    -fx-background-color: #00b300;
+    -fx-font-size: 18px;
+}
+
+/* Bouton spécifique Dislike */
+#dislikeButton {
+    -fx-background-color: #ff4d4d;
+    -fx-font-size: 18px;
+}
+
+/* Bouton Partager */
+#btnPartager {
+    -fx-background-color: #b583dc;
+}
+
+/* TextFields stylisés */
+.text-field {
+    -fx-background-radius: 10;
+    -fx-padding: 5;
+    -fx-background-color: white;
+    -fx-border-color: #cccccc;
+    -fx-border-radius: 10;
+    -fx-border-width: 1;
+}
+
+/* TextField imagePath non modifiable */
+#textfield_imagePath {
+    -fx-background-color: #e6e6e6;
+}
+
+/* TextField userId violet */
+#textfield_userId {
+    -fx-background-color: #b583dc;
+    -fx-text-fill: white;
+}
+
+/* Texts et Labels */
+.text {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+}
+
+/* Titre principal */
+.text-title {
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+}
+
+/* TableView */
+.table-view {
+    -fx-background-color: white;
+    -fx-border-color: #cccccc;
+    -fx-border-radius: 10;
+    -fx-border-width: 1;
+    -fx-background-radius: 10;
+}
+
+/* Table Columns */
+.table-column {
+    -fx-alignment: CENTER_LEFT;
+}
+
+/* Tooltip */
+.tooltip {
+    -fx-font-size: 12px;
+    -fx-background-color: #333333;
+    -fx-text-fill: white;
+}
+

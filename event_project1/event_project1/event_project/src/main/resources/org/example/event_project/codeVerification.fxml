@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox alignment="CENTER" spacing="10" style="-fx-background-color: linear-gradient(from 0% 0% to 100% 100%, #f0c0f0, #ffffff); -fx-padding: 20;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.event_project.Controllers.CodeVerificationController">
+
+    <!-- Titre -->
+    <Label style="-fx-font-family: 'Arial'; -fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #333333;" text="Entrez le code de réinitialisation" />
+
+    <!-- Champ de texte -->
+    <TextField fx:id="codeField" promptText="Code" style="-fx-background-color: #fce4ec; -fx-border-color: #ba68c8; -fx-border-radius: 10; -fx-background-radius: 10; -fx-padding: 6; -fx-pref-width: 300px;" />
+
+    <!-- Bouton -->
+    <Button onAction="#handleVerifyCode" style="-fx-background-color: linear-gradient(to right, #ce64c8, #8e3b8e); -fx-text-fill: white; -fx-font-size: 14px; -fx-font-weight: bold; -fx-border-radius: 20; -fx-background-radius: 20; -fx-pref-width: 200px; -fx-pref-height: 40px; -fx-cursor: hand;" text="Vérifier le code" />
+
+</VBox>

@@ -1,0 +1,235 @@
+/* === Styles Généraux === */
+.root {
+    -fx-font-family: "Segoe UI", sans-serif;
+    -fx-font-size: 14px;
+}
+
+/* === Conteneur principal === */
+.container {
+    -fx-padding: 20;
+    -fx-background-color: rgba(255, 255, 255, 0.7); /* effet semi-transparent sur le fond pastel */
+    -fx-background-radius: 15;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 10, 0.2, 0, 5);
+}
+
+/* === Titre === */
+.title-label {
+    -fx-font-size: 28px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #5C5470;
+    -fx-alignment: center;
+}
+
+/* === Libellés === */
+.form-label {
+    -fx-font-weight: bold;
+    -fx-text-fill: #4A4A4A;
+}
+
+/* === Champs de saisie === */
+.input-field {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #d0cde1;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-padding: 8;
+    -fx-text-fill: #333333;
+    -fx-prompt-text-fill: #999999;
+}
+
+/* === Boutons === */
+.custom-button {
+    -fx-background-color: linear-gradient(to right, #cbaacb, #e8c3f7);
+    -fx-background-radius: 25;
+    -fx-text-fill: #ffffff;
+    -fx-font-weight: bold;
+    -fx-padding: 8 18 8 18;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 4, 0.1, 0, 2);
+}
+
+.custom-button:hover {
+    -fx-background-color: linear-gradient(to right, #b38cb9, #d4a0ec);
+    -fx-cursor: hand;
+}
+
+/* === Zone de boutons === */
+.button-container {
+    -fx-alignment: center;
+}
+
+/* === Checkboxes pour la note === */
+.note-check {
+    -fx-text-fill: #5C5470;
+    -fx-padding: 5;
+}
+
+/* === TableView === */
+.custom-table {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #d0cde1;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+}
+
+.table-view .column-header {
+    -fx-background-color: #d4a0ec;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+}
+
+.table-view .cell {
+    -fx-padding: 8;
+}
+/* ===================== */
+/*      Style général     */
+/* ===================== */
+
+.root {
+    -fx-font-family: "Segoe UI", sans-serif;
+}
+
+/* ===================== */
+/*      Titres           */
+/* ===================== */
+
+.title-label {
+    -fx-font-size: 24px;
+    -fx-text-fill: linear-gradient(to right, #b30086, #ff66cc);
+    -fx-font-weight: bold;
+}
+
+/* ===================== */
+/*      Labels           */
+/* ===================== */
+
+.form-label {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #1a1a1a;
+}
+
+/* ===================== */
+/*      Champs de texte  */
+/* ===================== */
+
+.input-field, .text-area, .combo-box, .date-picker {
+    -fx-background-color: #f8f9fd;
+    -fx-text-fill: #1a1a1a;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-padding: 6px;
+}
+
+/* Pour TextArea */
+.text-area {
+    -fx-pref-height: 60px;
+    -fx-pref-width: 250px;
+}
+
+/* ===================== */
+/*      Boutons          */
+/* ===================== */
+
+.custom-button {
+    -fx-background-color: linear-gradient(to bottom, #D8A7F5, #9B3DA0);
+    -fx-text-fill: white;
+    -fx-padding: 8px 16px;
+    -fx-font-size: 14px;
+    -fx-border-radius: 12px;
+    -fx-background-radius: 12px;
+    -fx-cursor: hand;
+}
+
+/* ===================== */
+/*    Conteneur boutons  */
+/* ===================== */
+
+.button-container {
+    -fx-background-color: white;
+    -fx-background-radius: 15px;
+    -fx-padding: 20px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.1), 10, 0, 0, 10);
+}
+
+/* ===================== */
+/*     TableView         */
+/* ===================== */
+
+.table-view {
+    -fx-background-color: #ffffff;
+    -fx-text-fill: #1a1a1a;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+}
+/* Fond dégradé du AnchorPane (optionnel si gardé en FXML directement) */
+
+/* Titre de bienvenue */
+.title-text {
+    -fx-font-size: 36px;
+    -fx-font-weight: bold;
+    -fx-fill: linear-gradient(to bottom, #f4b6d8, #c47b8c, #9f4263);
+    -fx-font-family: 'Roboto', sans-serif;
+}
+
+/* Cadres des sections Avis et Réclamation */
+.card-box {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #dcd6f7;
+    -fx-border-radius: 20px;
+    -fx-background-radius: 20px;
+    -fx-padding: 15px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.1), 8, 0, 0, 4);
+    -fx-spacing: 20px;
+}
+
+/* === Card Box (section de la réclamation) === */
+.card-box {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #dcd6f7;
+    -fx-border-radius: 20px;
+    -fx-background-radius: 20px;
+    -fx-padding: 15px;
+    -fx-spacing: 20px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.1), 8, 0, 0, 4);
+}
+
+/* === Bouton Réclamation === */
+.card-button {
+    -fx-background-color: linear-gradient(to right, #FF99CC, #C471ED, #12C2E9);
+    -fx-text-fill: white;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 30px;
+    -fx-pref-width: 240px;
+    -fx-pref-height: 50px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.25), 8, 0.3, 0, 3);
+    -fx-cursor: hand;
+    -fx-transition: all 0.3s ease-in-out;
+}
+
+/* === Effet hover du bouton Réclamation === */
+.card-button:hover {
+    -fx-background-color: linear-gradient(to right, #12C2E9, #C471ED, #FF99CC); /* sens inversé du dégradé */
+    -fx-scale-x: 1.05;
+    -fx-scale-y: 1.05;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.4), 10, 0.5, 0, 4);
+}
+
+/* === Texte pour le formulaire de réclamation === */
+.form-label {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #1a1a1a;
+}
+
+/* === Champs de saisie pour la réclamation === */
+.input-field {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #d0cde1;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-padding: 8;
+    -fx-text-fill: #333333;
+    -fx-prompt-text-fill: #999999;
+}
+

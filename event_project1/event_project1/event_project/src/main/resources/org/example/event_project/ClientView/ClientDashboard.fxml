@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
+
+<BorderPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="org.example.event_project.Controllers.ClientDashboardController"
+            stylesheets="@../css/client.css">
+    <top>
+        <VBox>
+            <HBox alignment="CENTER_LEFT" spacing="15.0" styleClass="top-bar">
+                <padding>
+                    <Insets top="15.0" right="20.0" bottom="15.0" left="20.0"/>
+                </padding>
+                <Label text="ConnectArt" styleClass="app-title"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <!-- Updated TextField definition -->
+                <TextField fx:id="searchField" prefWidth="300.0" promptText="Rechercher un événement..." styleClass="search-box"/>
+                <ComboBox fx:id="filterComboBox" styleClass="filter-combo"/>
+                <Button fx:id="btnProfil" text="Mon profil" styleClass="nav-btn">
+                    <graphic>
+                        <FontIcon iconLiteral="fas-user" iconSize="16" iconColor="WHITE"/>
+                    </graphic>
+                </Button>
+            </HBox>
+            <HBox alignment="CENTER" styleClass="banner">
+                <padding>
+                    <Insets top="30.0" right="20.0" bottom="30.0" left="20.0"/>
+                </padding>
+                <Label text="Découvrez les événements à venir" styleClass="banner-title"/>
+            </HBox>
+        </VBox>
+    </top>
+    
+    <center>
+        <VBox spacing="20.0">
+            <padding>
+                <Insets top="20.0" right="20.0" bottom="20.0" left="20.0"/>
+            </padding>
+            
+            <Label text="Événements à venir" styleClass="section-title"/>
+            
+            <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS" styleClass="transparent-scroll-pane">
+                <FlowPane fx:id="evenementsContainer" hgap="20" vgap="20" styleClass="client-cards-container">
+                    <padding>
+                        <Insets top="10.0" right="10.0" bottom="10.0" left="10.0"/>
+                    </padding>
+                </FlowPane>
+            </ScrollPane>
+        </VBox>
+    </center>
+</BorderPane>

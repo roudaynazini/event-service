@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Hyperlink?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane prefHeight="450.0" prefWidth="600.0" style="-fx-background-color: white;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.event_project.Controllers.compte">
+    <children>
+
+        <!-- En-tête -->
+        <HBox alignment="CENTER_LEFT" prefHeight="80.0" prefWidth="600.0" style="-fx-background-color: linear-gradient(to right, #9b4de0, #e44abc); -fx-padding: 10;">
+            <children>
+                <ImageView fitHeight="60" fitWidth="60" preserveRatio="true">
+                    <image>
+                        <Image url="@images/aa.PNG" />
+                    </image>
+                </ImageView>
+                <VBox spacing="2" style="-fx-padding: 0 0 0 10;">
+                    <Label text="Event Up" textFill="white">
+                        <font>
+                            <Font name="Arial Black" size="22" />
+                        </font>
+                    </Label>
+                    <Label text="Mon compte" textFill="white">
+                        <font>
+                            <Font name="Segoe UI" size="16" />
+                        </font>
+                    </Label>
+                </VBox>
+            </children>
+        </HBox>
+
+        <!-- Bloc d'information utilisateur -->
+        <VBox layoutX="291.0" layoutY="112.0" spacing="18">
+            <children>
+                <HBox spacing="30">
+                    <Label text="ID:" textFill="#444">
+                        <font>
+                            <Font name="Arial" size="14.0" />
+                        </font>
+                    </Label>
+                    <Label fx:id="idLabel" text="Label" textFill="#555" />
+                </HBox>
+
+                <HBox spacing="30">
+                    <Label text="Nom:" textFill="#444">
+                        <font>
+                            <Font name="Arial" size="14.0" />
+                        </font>
+                    </Label>
+                    <Label fx:id="nomLabel" text="Label" textFill="#555" />
+                </HBox>
+
+                <HBox spacing="30">
+                    <Label text="Prénom:" textFill="#444">
+                        <font>
+                            <Font name="Arial" size="14.0" />
+                        </font>
+                    </Label>
+                    <Label fx:id="prenomLabel" text="Label" textFill="#555" />
+                </HBox>
+
+                <HBox spacing="30">
+                    <Label text="Email:" textFill="#444">
+                        <font>
+                            <Font name="Arial" size="14.0" />
+                        </font>
+                    </Label>
+                    <Label fx:id="emailLabel" text="Label" textFill="#555" />
+                </HBox>
+
+                <HBox spacing="30">
+                    <Label text="Téléphone:" textFill="#444">
+                        <font>
+                            <Font name="Arial" size="14.0" />
+                        </font>
+                    </Label>
+                    <Label fx:id="telephoneLabel" text="Label" textFill="#555" />
+                </HBox>
+
+                <HBox spacing="30">
+                    <Label text="Âge:" textFill="#444">
+                        <font>
+                            <Font name="Arial" size="14.0" />
+                        </font>
+                    </Label>
+                    <Label fx:id="ageLabel" text="Label" textFill="#555" />
+                </HBox>
+            </children>
+        </VBox>
+
+        <!-- Menu latéral -->
+        <VBox layoutX="-2.0" layoutY="80.0" prefHeight="373.0" prefWidth="213.0" style="-fx-background-color: linear-gradient(to right, #9b4de0, #e44abc);">
+            <children>
+            <Hyperlink onAction="#allerAccueil" style="-fx-underline: true;" text="Accueil " textFill="WHITE">
+               <font>
+                  <Font name="Arial" size="22.0" />
+               </font>
+            </Hyperlink>
+                <Hyperlink onAction="#allerProfil" prefHeight="25.0" prefWidth="71.0" style="-fx-underline: true;" text="Profil" textFill="WHITE">
+                    <font>
+                        <Font name="Arial" size="18.0" />
+                    </font>
+                </Hyperlink>
+                <Hyperlink onAction="#supprimerCompte" style="-fx-underline: true;" text="Supprimer" textFill="WHITE">
+                    <font>
+                        <Font name="Arial" size="18.0" />
+                    </font>
+                </Hyperlink>
+                <Hyperlink onAction="#modifierCompte" style="-fx-underline: true;" text="Modifier" textFill="WHITE">
+                    <font>
+                        <Font name="Arial" size="18.0" />
+                    </font>
+                </Hyperlink>
+                <Hyperlink onAction="#deconnexion" style="-fx-underline: true;" text="Déconnexion" textFill="WHITE">
+                    <font>
+                        <Font name="Arial" size="18.0" />
+                    </font>
+                </Hyperlink>
+            </children>
+        </VBox>
+
+    </children>
+</AnchorPane>

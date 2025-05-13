@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane prefHeight="500.0" prefWidth="600.0" style="-fx-background-color: #f9f9fb;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.event_project.Controllers.ajout">
+
+    <children>
+
+        <!-- En-tête -->
+        <HBox alignment="CENTER_LEFT" prefHeight="60.0" prefWidth="600.0" style="-fx-background-color: linear-gradient(to right, #9b4de0, #e44abc); -fx-padding: 10;">
+            <children>
+                <ImageView fitHeight="50" fitWidth="60" preserveRatio="true">
+                    <image>
+                        <Image url="@images/aa.PNG" />
+                    </image>
+                </ImageView>
+                <VBox spacing="2" style="-fx-padding: 0 0 0 10;">
+                    <Label text="Event Up" textFill="white">
+                        <font>
+                            <Font name="Arial Rounded MT Bold" size="22.0" />
+                        </font>
+                    </Label>
+                    <Label text="Créer un compte" textFill="white">
+                        <font>
+                            <Font name="Arial" size="16.0" />
+                        </font>
+                    </Label>
+                </VBox>
+            </children>
+        </HBox>
+
+        <!-- Formulaire -->
+        <VBox layoutX="50" layoutY="80" prefWidth="500" spacing="15">
+            <children>
+                <HBox spacing="20">
+                    <Label prefWidth="150" style="-fx-font-weight: bold; -fx-text-fill: #333;" text="Nom" />
+                    <TextField fx:id="nomField" prefWidth="300" style="-fx-background-color: #fce4ec; -fx-border-color: #ba68c8; -fx-border-radius: 10; -fx-background-radius: 10; -fx-padding: 5;" />
+                </HBox>
+
+                <HBox spacing="20">
+                    <Label prefWidth="150" style="-fx-font-weight: bold; -fx-text-fill: #333;" text="Prénom" />
+                    <TextField fx:id="prenomField" prefWidth="300" style="-fx-background-color: #fce4ec; -fx-border-color: #ba68c8; -fx-border-radius: 10; -fx-background-radius: 10; -fx-padding: 5;" />
+                </HBox>
+
+                <HBox spacing="20">
+                    <Label prefWidth="150" style="-fx-font-weight: bold; -fx-text-fill: #333;" text="Email" />
+                    <TextField fx:id="emailField" prefWidth="300" promptText="exemple@domaine.com" style="-fx-background-color: #fce4ec; -fx-border-color: #ba68c8; -fx-border-radius: 10; -fx-background-radius: 10; -fx-padding: 6;" />
+                </HBox>
+
+                <HBox spacing="20">
+                    <Label prefWidth="150" style="-fx-font-weight: bold; -fx-text-fill: #333;" text="Mot de passe" />
+                    <PasswordField fx:id="passwordField" prefWidth="300" style="-fx-background-color: #fce4ec; -fx-border-color: #ba68c8; -fx-border-radius: 10; -fx-background-radius: 10; -fx-padding: 5;" />
+                </HBox>
+
+                <HBox spacing="20">
+                    <Label prefWidth="150" style="-fx-font-weight: bold; -fx-text-fill: #333;" text="Numéro de téléphone" />
+                    <TextField fx:id="numTelephoneField" prefWidth="300" style="-fx-background-color: #fce4ec; -fx-border-color: #ba68c8; -fx-border-radius: 10; -fx-background-radius: 10; -fx-padding: 5;" />
+                </HBox>
+
+                <HBox spacing="20">
+                    <Label prefWidth="150" style="-fx-font-weight: bold; -fx-text-fill: #333;" text="Âge" />
+                    <ComboBox fx:id="ageComboBox" prefWidth="300" promptText="Sélectionner l'âge" style="-fx-background-color: #fce4ec; -fx-border-color: #ba68c8; -fx-border-radius: 10; -fx-background-radius: 10; -fx-padding: 5;" />
+                </HBox>
+            </children>
+        </VBox>
+
+        <!-- Boutons -->
+        <HBox layoutX="150" layoutY="450" spacing="20">
+            <Button fx:id="button_ajouter" onAction="#ajouterPersonne" prefHeight="36.0" prefWidth="129.0" style="-fx-background-color: linear-gradient(to right, #d17bd1, #8e3b8e); -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 20;" text="Ajouter" />
+            <Button fx:id="button_annuler" onAction="#annulerAction" prefHeight="38.0" prefWidth="124.0" style="-fx-background-color: linear-gradient(to right, #d17bd1, #8e3b8e); -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 20;" text="Annuler" />
+        </HBox>
+
+    </children>
+</AnchorPane>

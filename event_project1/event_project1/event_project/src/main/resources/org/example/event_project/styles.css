@@ -1,0 +1,30 @@
+/* Table header (column titles) purple */
+.table-view .column-header-background {
+    -fx-background-color: #9370DB;
+}
+
+.table-view .column-header, 
+.table-view .column-header .label {
+    -fx-background-color: #9370DB;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+}
+
+/* Table cells white */
+.table-view .table-row-cell {
+    -fx-background-color: white;
+    -fx-text-fill: #C71585;
+}
+
+/* Highlight selected row */
+.table-view .table-row-cell:filled:selected, 
+.table-view .table-row-cell:filled:selected:focused {
+    -fx-background-color: #ffe4e1;
+    -fx-text-fill: #C71585;
+}
+
+/* Table cell text color for visibility */
+.table-view .table-cell {
+    -fx-text-fill: #C71585;
+    -fx-background-color: transparent;
+} 

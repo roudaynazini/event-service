@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.effect.*?>
+
+<AnchorPane xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
+            fx:controller="org.example.event_project.Controllers.InviteeController"
+            style="-fx-background-color: linear-gradient(to bottom right, #4b2a82, #bd4089);">
+
+    <VBox spacing="15" alignment="TOP_CENTER" AnchorPane.topAnchor="20.0"
+          AnchorPane.rightAnchor="20.0" AnchorPane.leftAnchor="20.0"
+          AnchorPane.bottomAnchor="20.0">
+
+        <Label fx:id="titreLabel" text="Gestion des Invités"
+               style="-fx-font-size: 34px; -fx-font-weight: bold; -fx-text-fill: white;"/>
+
+
+
+        <!-- Champ Nom -->
+        <HBox alignment="CENTER_LEFT" spacing="10">
+            <Label text="Nom:"
+                   style="-fx-font-size: 16px; -fx-text-fill: white;"/>
+        </HBox>
+        <TextField fx:id="txtNomInvitee" prefHeight="30" prefWidth="350"
+                   style="-fx-background-color: white; -fx-background-radius: 5;"/>
+
+
+        <!-- Champ Email -->
+        <HBox alignment="CENTER_LEFT" spacing="10">
+            <Label text="Email:"
+                   style="-fx-font-size: 16px; -fx-text-fill: white;"/>
+        </HBox>
+        <TextField fx:id="txtEmailInvitee" prefHeight="30" prefWidth="150"
+                   style="-fx-background-color: white; -fx-background-radius: 5;"/>
+
+        <!-- Champ Téléphone -->
+        <HBox alignment="CENTER_LEFT" spacing="10">
+            <Label text="Téléphone:"
+                   style="-fx-font-size: 16px; -fx-text-fill: white;"/>
+        </HBox>
+        <TextField fx:id="txtTlfInvitee" prefHeight="30" prefWidth="150"
+                   style="-fx-background-color: white; -fx-background-radius: 5;"/>
+
+        <!-- Champ Adresse -->
+        <HBox alignment="CENTER_LEFT" spacing="10">
+            <Label text="Adresse:"
+                   style="-fx-font-size: 16px; -fx-text-fill: white;"/>
+        </HBox>
+        <TextField fx:id="txtAdresseInvitee" prefHeight="30" prefWidth="150"
+                   style="-fx-background-color: white; -fx-background-radius: 5;"/>
+
+        <!-- Boutons des actions principales -->
+        <HBox spacing="15" alignment="CENTER">
+            <Button fx:id="ajouterInviteeButton" text="Ajouter" prefHeight="30" prefWidth="150"
+                    style="-fx-background-color: linear-gradient(to right, #673ab7, #9c27b0); -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 5;"/>
+
+            <Button fx:id="modifierInviteeButton" text="Modifier" prefHeight="30" prefWidth="150"
+                    style="-fx-background-color: linear-gradient(to right, #673ab7, #e91e63); -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 5;"/>
+
+        </HBox>
+
+        <!-- Champ ID à supprimer -->
+        <HBox spacing="10" alignment="CENTER_LEFT">
+            <Label text="ID à supprimer:"
+                   style="-fx-font-size: 14px; -fx-text-fill: white;"/>
+        </HBox>
+
+        <HBox spacing="10">
+            <TextField fx:id="txtIdSupprimer" prefWidth="100" prefHeight="3"
+                       style="-fx-background-color: white; -fx-border-color: #e91e63; -fx-background-radius: 5; -fx-border-radius: 5;"/>
+            <Button fx:id="supprimerInviteeButton" text="Supprimer" prefHeight="30" prefWidth="150"
+                    style="-fx-background-color: linear-gradient(to right, #673ab7, #e91e63); -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 5;"/>
+        </HBox>
+
+
+        <Label fx:id="statusMessage" textFill="white" style="-fx-font-size: 14px;"/>
+
+        <!-- TableView -->
+        <TableView fx:id="tableViewInvitee" prefHeight="200" prefWidth="500"
+                   style="-fx-background-color: rgba(80, 20, 90, 0.5); -fx-table-cell-border-color: rgba(200, 200, 200, 0.3); -fx-text-fill: white;">
+            <columns>
+                <TableColumn fx:id="colIdInvitee" text="ID" prefWidth="50"/>
+                <TableColumn fx:id="colNomInvitee" text="Nom" prefWidth="200"/>
+                <TableColumn fx:id="colEmailInvitee" text="Email" prefWidth="200"/>
+                <TableColumn fx:id="colTlfInvitee" text="Téléphone" prefWidth="100"/>
+                <TableColumn fx:id="colAdresseInvitee" text="Adresse" prefWidth="150"/>
+            </columns>
+            <columnResizePolicy>
+                <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
+            </columnResizePolicy>
+        </TableView>
+
+        <!-- Bouton Retour -->
+        <Button fx:id="btnRetourInviteeAffichage" text="Retour" onAction="#handleRetourInviteeAffichage"
+                prefHeight="30" prefWidth="300"
+                style="-fx-background-color: linear-gradient(to right, #673ab7, #e91e63); -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 5;"/>
+
+    </VBox>
+</AnchorPane>

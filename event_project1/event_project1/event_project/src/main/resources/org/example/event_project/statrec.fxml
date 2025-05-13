@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.chart.CategoryAxis?>
+<?import javafx.scene.chart.LineChart?>
+<?import javafx.scene.chart.NumberAxis?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<?import javafx.scene.control.Button?>
+<AnchorPane xmlns:fx="http://javafx.com/fxml"
+            fx:controller="org.example.event_project.Controllers.ReclamationStat"
+            prefWidth="600" prefHeight="400">
+
+    <LineChart fx:id="chartReclamations" layoutX="20.0" layoutY="20.0"
+               prefWidth="560.0" prefHeight="360.0">
+        <xAxis>
+            <CategoryAxis label="Date"/>
+        </xAxis>
+        <yAxis>
+            <NumberAxis label="Nombre de réclamations"/>
+        </yAxis>
+    </LineChart>
+</AnchorPane>

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.image.ImageView?>
+
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="org.example.event_project.ReservationDialogController"
+      spacing="10"
+      style="-fx-background-color: #FFF0F5;">
+    <padding>
+        <Insets top="20" right="20" bottom="20" left="20"/>
+    </padding>
+
+    <!-- Title -->
+    <Label text="Reservation Details" style="-fx-font-size: 18px; -fx-text-fill: #C71585; -fx-font-weight: bold;"/>
+
+    <GridPane hgap="10" vgap="10" style="-fx-background-color: white; -fx-padding: 15; -fx-background-radius: 5; -fx-border-color: #9370DB; -fx-border-radius: 5;">
+        <Label text="Client Name:" GridPane.columnIndex="0" GridPane.rowIndex="0" style="-fx-text-fill: #C71585;"/>
+        <TextField fx:id="clientNameField" GridPane.columnIndex="1" GridPane.rowIndex="0" GridPane.hgrow="ALWAYS"
+                  style="-fx-background-color: #9370DB; -fx-text-fill: #C71585;"/>
+        
+        <Label text="Event Date:" GridPane.columnIndex="0" GridPane.rowIndex="1" style="-fx-text-fill: #C71585;"/>
+        <DatePicker fx:id="eventDatePicker" GridPane.columnIndex="1" GridPane.rowIndex="1" GridPane.hgrow="ALWAYS"
+                   style="-fx-background-color: #9370DB; -fx-text-fill: #C71585;"/>
+        
+        <Label text="Status:" GridPane.columnIndex="0" GridPane.rowIndex="2" style="-fx-text-fill: #C71585;"/>
+        <ComboBox fx:id="statusComboBox" GridPane.columnIndex="1" GridPane.rowIndex="2" GridPane.hgrow="ALWAYS"
+                 style="-fx-background-color: #9370DB; -fx-text-fill: #C71585;"/>
+
+        <Label text="Notes:" GridPane.columnIndex="0" GridPane.rowIndex="3" style="-fx-text-fill: #C71585;"/>
+        <TextArea fx:id="notesArea" GridPane.columnIndex="1" GridPane.rowIndex="3" GridPane.hgrow="ALWAYS"
+                  style="-fx-control-inner-background: #9775d1; -fx-text-fill: #C71585;" wrapText="true"/>
+
+        <!-- QR Code Display (hidden by default) -->
+        <Label text="Reservation QR Code:" GridPane.columnIndex="0" GridPane.rowIndex="4" style="-fx-text-fill: #C71585;" fx:id="qrCodeLabel" visible="false"/>
+        <ImageView fx:id="qrCodeImageView" GridPane.columnIndex="1" GridPane.rowIndex="4" fitWidth="150" fitHeight="150" preserveRatio="true" visible="false"/>
+
+        <!-- Show QR Code and Export to PDF Buttons -->
+        <HBox spacing="10" GridPane.columnSpan="2" GridPane.rowIndex="5">
+            <Button fx:id="showQrButton" text="Show QR Code" onAction="#handleShowQrCode" style="-fx-background-color: #D8BFD8; -fx-text-fill: #C71585; -fx-font-weight: bold;"/>
+            <Button fx:id="exportPdfButton" text="Export to PDF" onAction="#handleExportToPdf" style="-fx-background-color: #D8BFD8; -fx-text-fill: #C71585; -fx-font-weight: bold;"/>
+        </HBox>
+    </GridPane>
+    <!-- Buttons at the bottom of the dialog -->
+    <HBox spacing="10" alignment="CENTER_RIGHT">
+        <Button fx:id="okButton" text="Save" onAction="#handleOk" 
+                style="-fx-background-color: #D8BFD8; -fx-text-fill: #C71585; -fx-font-weight: bold;"/>
+        <Button fx:id="cancelButton" text="Cancel" onAction="#handleCancel" 
+                style="-fx-background-color: #D8BFD8; -fx-text-fill: #C71585; -fx-font-weight: bold;"/>
+    </HBox>
+</VBox>

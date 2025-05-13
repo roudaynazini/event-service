@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane xmlns:fx="http://javafx.com/fxml" fx:controller="org.example.event_project.Controllers.AffichageAvisReclamationsController" stylesheets="@images/style.css">
+    <!-- Mise à jour de la taille de l'AnchorPane -->
+    <AnchorPane prefWidth="1000" prefHeight="600">
+        <VBox spacing="20">
+            <padding>
+                <Insets top="20" right="20" bottom="20" left="20"/>
+            </padding>
+            <!-- Agrandissement de la HBox avec plus d'espacement et ajustement des tailles de TextField -->
+            <HBox spacing="15">
+                <TextField fx:id="tfIdUtilisateur" promptText="ID Utilisateur" styleClass="textfield-search" prefWidth="250"/>
+                <TextField fx:id="tfIdEvenement" promptText="ID Événement" styleClass="textfield-search" prefWidth="250"/>
+                <Button text="Rechercher" onAction="#afficherAvisEtReclamations" styleClass="custom-button"/>
+            </HBox>
+
+            <!-- TableView pour afficher les données -->
+            <ScrollPane fitToHeight="true" fitToWidth="true">
+                <TableView fx:id="tableView" styleClass="table-view" prefHeight="400">
+                    <columns>
+                        <TableColumn fx:id="colIdAvis" text="ID Avis" prefWidth="100" />
+                        <TableColumn fx:id="colNote" text="Note" prefWidth="100" />
+                        <TableColumn fx:id="colCommentaire" text="Commentaire" prefWidth="200" />
+                        <TableColumn fx:id="colIdReclamation" text="ID Réclamation" prefWidth="150" />
+                        <TableColumn fx:id="colEtat" text="État" prefWidth="100" />
+                        <TableColumn fx:id="colDescription" text="Description" prefWidth="250" />
+                    </columns>
+                </TableView>
+            </ScrollPane>
+        </VBox>
+    </AnchorPane>
+</AnchorPane>

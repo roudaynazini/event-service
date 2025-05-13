@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<VBox xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="org.example.event_project.Controllers.CategorieFormController"
+      spacing="10.0" styleClass="form-container" stylesheets="@../css/admin.css">
+    <padding>
+        <Insets top="20.0" right="20.0" bottom="20.0" left="20.0"/>
+    </padding>
+    
+    <Label text="Ajouter/Modifier une Catégorie" styleClass="form-title"/>
+    
+    <GridPane vgap="10" hgap="10">
+        <Label text="Type:" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+        <TextField fx:id="typeField" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+        
+        <Label text="Description:" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+        <TextArea fx:id="descriptionField" wrapText="true" prefRowCount="3" 
+                 GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+        
+        <Label text="Statut:" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+        <ComboBox fx:id="statusComboBox" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+    </GridPane>
+    
+    <HBox spacing="10.0" alignment="CENTER_RIGHT">
+        <Button fx:id="btnCancel" text="Annuler" onAction="#handleCancelAction" styleClass="cancel-btn"/>
+        <Button fx:id="btnSave" text="Enregistrer" onAction="#handleSaveAction" styleClass="save-btn"/>
+    </HBox>
+</VBox>

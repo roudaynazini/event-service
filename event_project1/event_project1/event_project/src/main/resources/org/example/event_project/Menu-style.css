@@ -1,0 +1,100 @@
+.background-rectangle {
+    -fx-fill: linear-gradient(to bottom right, #f9c1d9, #b9a3f6, #f4d1e8, #e8a5db);
+}
+.button {
+    -fx-background-color: #CE93D8;
+    -fx-text-fill: white;
+    -fx-font-size: 16px;
+    -fx-background-radius: 10;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.25), 3, 0, 0, 1);
+    -fx-transition: all 0.3s ease;
+}
+
+/* Animation au survol */
+.button:hover {
+    -fx-scale-x: 1.1;
+    -fx-scale-y: 1.1;
+    -fx-background-color: #BA68C8;
+}
+.welcome-text {
+    -fx-font-size: 36px;
+    -fx-font-weight: bold;
+    -fx-fill: linear-gradient(to bottom, #f4b6d8, #c47b8c, #9f4263);
+    -fx-font-family: 'Roboto', sans-serif;
+}
+/* Style pour le bouton Like */
+#likeButton {
+    -fx-background-color: #00b300;
+    -fx-text-fill: white;
+    -fx-background-radius: 8;
+    -fx-font-size: 18px;
+}
+
+#likeButton:hover {
+    -fx-background-color: #009900;
+    -fx-scale-x: 1.1;
+    -fx-scale-y: 1.1;
+}
+
+/* Style pour le bouton Dislike */
+#dislikeButton {
+    -fx-background-color: #ff4d4d;
+    -fx-text-fill: white;
+    -fx-background-radius: 8;
+    -fx-font-size: 18px;
+}
+
+#dislikeButton:hover {
+    -fx-background-color: #cc0000;
+    -fx-scale-x: 1.1;
+    -fx-scale-y: 1.1;
+}
+#btnBadges {
+    -fx-background-color: linear-gradient(to right, #9c4dcc, #e1bee7);
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-background-radius: 15;
+    -fx-padding: 8 15;
+}
+/* style.css */
+
+/* Style général des boutons */
+.button-style {
+    -fx-background-color: linear-gradient(to bottom, #D8A7F5, #9B3DA0);
+    -fx-text-fill: white;
+    -fx-padding: 10px 20px;
+    -fx-font-size: 16px;
+    -fx-border-radius: 12px;
+    -fx-min-width: 200px;
+    -fx-max-width: 250px;
+}
+
+/* Effet hover */
+.button-style:hover {
+    -fx-background-color: linear-gradient(to bottom, #9B3DA0, #D8A7F5);
+}
+
+/* Style pour le menu latéral */
+.vbox-sidebar {
+    -fx-background-color: linear-gradient(to bottom, #8e44ad, #c39bd3);
+    -fx-padding: 30;
+    -fx-background-radius: 0 10 10 0;
+    -fx-spacing: 25;
+    -fx-alignment: top-center;
+}
+
+/* Boutons du menu */
+.sidebar-button {
+    -fx-background-color: linear-gradient(to bottom, #D8A7F5, #9B3DA0);
+    -fx-text-fill: white;
+    -fx-padding: 10px 20px;
+    -fx-font-size: 16px;
+    -fx-border-radius: 12px;
+    -fx-min-width: 200px;
+    -fx-max-width: 250px;
+}
+
+.sidebar-button:hover {
+    -fx-background-color: linear-gradient(to bottom, #9B3DA0, #D8A7F5);
+}

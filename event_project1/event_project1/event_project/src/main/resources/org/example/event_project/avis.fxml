@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+        <?import javafx.scene.control.*?>
+        <?import javafx.scene.layout.*?>
+        <?import javafx.scene.shape.Rectangle?>
+        <?import javafx.scene.chart.NumberAxis?>
+        <?import javafx.scene.chart.BarChart?>
+        <?import javafx.scene.chart.CategoryAxis?>
+
+<AnchorPane prefHeight="900" prefWidth="1300"
+            xmlns="http://javafx.com/javafx/23.0.1"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="org.example.event_project.Controllers.Aviscontroller"
+            stylesheets="@images/style.css"
+            style="-fx-background-color: transparent;">
+
+    <!-- Fond pastel dégradé -->
+    <Rectangle fill="linear-gradient(to bottom right, #f9c1d9, #b9a3f6, #f4d1e8, #e8a5db)"
+               height="900.0" width="1300.0" />
+
+    <!-- Contenu principal avec fond semi-transparent -->
+    <VBox layoutX="30" layoutY="30" prefWidth="1240" spacing="25" style="-fx-background-color: rgba(255,255,255,0.75); -fx-padding: 20; -fx-background-radius: 20; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 10, 0, 0, 4);">
+        <!-- Bouton retour -->
+        <HBox alignment="center_left" spacing="10">
+            <Button onAction="#retouracceuil" text="Retour" styleClass="custom-button"/>
+        </HBox>
+
+        <!-- Titre -->
+        <Label styleClass="title-label" text="Gestion des Avis" />
+
+        <!-- Conteneur Form + Table -->
+        <HBox spacing="30">
+            <!-- Formulaire -->
+            <VBox spacing="20" prefWidth="500">
+                <GridPane hgap="15" vgap="20">
+                    <columnConstraints>
+                        <ColumnConstraints halignment="RIGHT" minWidth="120" />
+                        <ColumnConstraints halignment="LEFT" minWidth="350" />
+                    </columnConstraints>
+
+                    <Label text="ID Utilisateur:" GridPane.columnIndex="0" GridPane.rowIndex="0" styleClass="form-label"/>
+                    <TextField fx:id="tf_idUtilisateur" promptText="ID Utilisateur" GridPane.columnIndex="1" GridPane.rowIndex="0" styleClass="input-field"/>
+
+                    <Label text="ID Événement:" GridPane.columnIndex="0" GridPane.rowIndex="1" styleClass="form-label"/>
+                    <TextField fx:id="tf_idEvenement" promptText="ID Événement" GridPane.columnIndex="1" GridPane.rowIndex="1" styleClass="input-field"/>
+
+                    <Label text="Commentaire:" GridPane.columnIndex="0" GridPane.rowIndex="2" styleClass="form-label"/>
+                    <TextField fx:id="tf_commentaire" promptText="Commentaire..." GridPane.columnIndex="1" GridPane.rowIndex="2" styleClass="input-field"/>
+
+                    <Label text="Date:" GridPane.columnIndex="0" GridPane.rowIndex="3" styleClass="form-label"/>
+                    <DatePicker fx:id="datePicker" GridPane.columnIndex="1" GridPane.rowIndex="3" styleClass="input-field"/>
+                </GridPane>
+
+                <!-- Note avec Boutons Radio -->
+                <Label text="Note:" styleClass="form-label"/>
+                <HBox spacing="10" styleClass="rating-container">
+                    <RadioButton fx:id="rb_1" text="1" styleClass="note-radio"/>
+                    <RadioButton fx:id="rb_2" text="2" styleClass="note-radio"/>
+                    <RadioButton fx:id="rb_3" text="3" styleClass="note-radio"/>
+                    <RadioButton fx:id="rb_4" text="4" styleClass="note-radio"/>
+                    <RadioButton fx:id="rb_5" text="5" styleClass="note-radio"/>
+                </HBox>
+
+                <!-- Boutons Action -->
+                <HBox alignment="center" spacing="15">
+                    <Button onAction="#createAvis" text="Ajouter" styleClass="custom-button"/>
+                    <Button onAction="#updateAvis" text="Modifier" styleClass="custom-button"/>
+                    <Button onAction="#deleteAvis" text="Supprimer" styleClass="custom-button"/>
+                </HBox>
+            </VBox>
+
+            <!-- Table et autres éléments -->
+            <VBox prefWidth="700" spacing="10">
+                <!-- Recherche en haut à droite -->
+                <HBox alignment="TOP_RIGHT" spacing="10">
+                    <TextField fx:id="tf_search" promptText="Rechercher par note" styleClass="input-field"/>
+                    <Button onAction="#searchAvis" text="Rechercher" styleClass="custom-button"/>
+                </HBox>
+
+                <!-- Table des avis -->
+                <TableView fx:id="tableview_avis" onMouseClicked="#onRowClick" styleClass="custom-table" prefHeight="500">
+                    <columns>
+                        <TableColumn fx:id="column_idAvis" text="ID Avis" prefWidth="100"/>
+                        <TableColumn fx:id="column_idUtilisateur" text="ID Utilisateur" prefWidth="100"/>
+                        <TableColumn fx:id="column_idEvenement" text="ID Événement" prefWidth="100"/>
+                        <TableColumn fx:id="column_note" text="Note" prefWidth="100"/>
+                        <TableColumn fx:id="column_commentaire" text="Commentaire" prefWidth="250"/>
+                        <TableColumn fx:id="column_dateAvis" text="Date" prefWidth="100"/>
+                    </columns>
+                </TableView>
+
+                <!-- Bouton "Passer à réclamation" en bas à droite -->
+                <HBox alignment="BOTTOM_RIGHT">
+                    <Button fx:id="btnDownloadPdf" onAction="#handleDownloadPdf" styleClass="custom-button" text="Télécharger PDF" />
+                    <Button onAction="#passerAreclamation" text="réclamation" styleClass="custom-button"/>
+                    <Button onAction="#reinitialiserChamps" styleClass="custom-button" text="Réinitialiser" />
+                    <Button onAction="#ouvrirStatistiques" text="Statistiques" styleClass="custom-button"/> </HBox>
+
+             </VBox>
+        </HBox>
+
+    </VBox>
+</AnchorPane>

@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.chart.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<BorderPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="org.example.event_project.Controllers.StatisticsController"
+            prefWidth="900" prefHeight="700" styleClass="stats-dialog">
+    <top>
+        <HBox alignment="CENTER_LEFT" spacing="10" styleClass="stats-header">
+            <padding>
+                <Insets top="15" right="15" bottom="15" left="15"/>
+            </padding>
+            <Label text="Statistiques" styleClass="stats-title"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Button fx:id="closeButton" onAction="#closeDialog" styleClass="close-button" text="×"/>
+        </HBox>
+    </top>
+    
+    <center>
+        <TabPane tabClosingPolicy="UNAVAILABLE">
+            <Tab text="Événements">
+                <VBox spacing="20" alignment="TOP_CENTER">
+                    <padding>
+                        <Insets top="20" right="20" bottom="20" left="20"/>
+                    </padding>
+                    <HBox spacing="20" alignment="CENTER">
+                        <!-- Replace WebView with PieChart -->
+                        <PieChart fx:id="eventsStatusChart" prefHeight="350" prefWidth="400" title="État des événements" animated="true"/>
+                        <!-- Replace WebView with PieChart -->
+                        <PieChart fx:id="eventsDistributionChart" prefHeight="350" prefWidth="400" title="Distribution temporelle" animated="true"/>
+                    </HBox>
+                    <TitledPane text="Statistiques des événements" expanded="false">
+                        <TableView fx:id="eventStatsTable" prefHeight="200">
+                            <columns>
+                                <TableColumn fx:id="statLabelColumn" text="Statistique" prefWidth="200"/>
+                                <TableColumn fx:id="statValueColumn" text="Valeur" prefWidth="150"/>
+                            </columns>
+                        </TableView>
+                    </TitledPane>
+                </VBox>
+            </Tab>
+            <Tab text="Catégories">
+                <VBox spacing="20" alignment="TOP_CENTER">
+                    <padding>
+                        <Insets top="20" right="20" bottom="20" left="20"/>
+                    </padding>
+                    <!-- Replace WebView with BarChart -->
+                    <BarChart fx:id="categoriesChart" prefHeight="350" prefWidth="800" title="Événements par catégorie" animated="true">
+                        <xAxis>
+                            <CategoryAxis label="Catégorie"/>
+                        </xAxis>
+                        <yAxis>
+                            <NumberAxis label="Nombre d'événements"/>
+                        </yAxis>
+                    </BarChart>
+                    <TitledPane text="Détails des catégories" expanded="false">
+                        <TableView fx:id="categoryStatsTable" prefHeight="200">
+                            <columns>
+                                <TableColumn fx:id="categoryNameColumn" text="Catégorie" prefWidth="200"/>
+                                <TableColumn fx:id="categoryCountColumn" text="Nombre d'événements" prefWidth="150"/>
+                                <TableColumn fx:id="categoryPercentColumn" text="Pourcentage" prefWidth="120"/>
+                            </columns>
+                        </TableView>
+                    </TitledPane>
+                </VBox>
+            </Tab>
+            <Tab text="Chronologie">
+                <VBox spacing="20" alignment="TOP_CENTER">
+                    <padding>
+                        <Insets top="20" right="20" bottom="20" left="20"/>
+                    </padding>
+                    <HBox spacing="20" alignment="CENTER">
+                        <VBox spacing="10" alignment="CENTER">
+                            <Label text="Période" styleClass="stats-period-label"/>
+                            <ComboBox fx:id="periodComboBox" promptText="Sélectionner une période"/>
+                        </VBox>
+                        <Button fx:id="refreshButton" text="Actualiser" onAction="#refreshTimelineStats"/>
+                    </HBox>
+                    <!-- Replace WebView with LineChart -->
+                    <LineChart fx:id="timelineChart" prefHeight="400" prefWidth="800" title="Évolution temporelle des événements" animated="true">
+                        <xAxis>
+                            <CategoryAxis label="Mois"/>
+                        </xAxis>
+                        <yAxis>
+                            <NumberAxis label="Nombre d'événements"/>
+                        </yAxis>
+                    </LineChart>
+                </VBox>
+            </Tab>
+        </TabPane>
+    </center>
+</BorderPane>

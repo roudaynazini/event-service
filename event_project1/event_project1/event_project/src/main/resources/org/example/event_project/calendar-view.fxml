@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.text.Text?>
+<?import javafx.scene.chart.PieChart?>
+<?import javafx.scene.chart.BarChart?>
+<?import javafx.scene.chart.CategoryAxis?>
+<?import javafx.scene.chart.NumberAxis?>
+<?import javafx.scene.image.ImageView?>
+
+<VBox fx:id="root" xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="org.example.event_project.CalendarViewController"
+      spacing="10"
+      style="-fx-background-color: #FFF0F5;"
+      prefWidth="1200" prefHeight="700">
+    
+    <padding>
+        <Insets top="20" right="20" bottom="20" left="20"/>
+    </padding>
+
+    <!-- Title -->
+    <Label text="Reservation Calendar" style="-fx-font-size: 24px; -fx-text-fill: #C71585; -fx-font-weight: bold;"/>
+
+    <!-- Main Content Area -->
+    <HBox spacing="20" VBox.vgrow="ALWAYS">
+        <!-- Left side - Calendar -->
+        <VBox spacing="10" HBox.hgrow="ALWAYS">
+            <!-- Calendar Controls -->
+            <HBox spacing="20" alignment="CENTER" style="-fx-padding: 10 0 20 0;">
+                <Button text="Previous" onAction="#handlePreviousMonth" 
+                        style="-fx-background-color: #D8BFD8; -fx-text-fill: #C71585; -fx-font-weight: bold; -fx-min-width: 100;"/>
+                <Label fx:id="monthYearLabel" style="-fx-font-size: 20px; -fx-text-fill: #C71585; -fx-font-weight: bold; -fx-min-width: 200; -fx-alignment: CENTER;"/>
+                <Button text="Next" onAction="#handleNextMonth" 
+                        style="-fx-background-color: #D8BFD8; -fx-text-fill: #C71585; -fx-font-weight: bold; -fx-min-width: 100;"/>
+            </HBox>
+
+            <!-- Calendar Grid -->
+            <GridPane fx:id="calendarGrid" VBox.vgrow="ALWAYS" 
+                      style="-fx-background-color: white; -fx-grid-lines-visible: true; -fx-border-color: #9370DB; -fx-border-width: 1;">
+                <columnConstraints>
+                    <ColumnConstraints hgrow="ALWAYS" percentWidth="14.28"/>
+                    <ColumnConstraints hgrow="ALWAYS" percentWidth="14.28"/>
+                    <ColumnConstraints hgrow="ALWAYS" percentWidth="14.28"/>
+                    <ColumnConstraints hgrow="ALWAYS" percentWidth="14.28"/>
+                    <ColumnConstraints hgrow="ALWAYS" percentWidth="14.28"/>
+                    <ColumnConstraints hgrow="ALWAYS" percentWidth="14.28"/>
+                    <ColumnConstraints hgrow="ALWAYS" percentWidth="14.28"/>
+                </columnConstraints>
+                <rowConstraints>
+                    <RowConstraints vgrow="ALWAYS" percentHeight="10"/> <!-- Header row -->
+                    <RowConstraints vgrow="ALWAYS" percentHeight="15"/>
+                    <RowConstraints vgrow="ALWAYS" percentHeight="15"/>
+                    <RowConstraints vgrow="ALWAYS" percentHeight="15"/>
+                    <RowConstraints vgrow="ALWAYS" percentHeight="15"/>
+                    <RowConstraints vgrow="ALWAYS" percentHeight="15"/>
+                    <RowConstraints vgrow="ALWAYS" percentHeight="15"/>
+                </rowConstraints>
+                <padding>
+                    <Insets top="5" right="5" bottom="5" left="5"/>
+                </padding>
+            </GridPane>
+
+            <!-- Reservations List -->
+            <VBox spacing="5" VBox.vgrow="NEVER" style="-fx-background-color: white; -fx-border-color: #9370DB; -fx-border-width: 1; -fx-padding: 10;">
+                <Label text="Reservations for Selected Date" style="-fx-font-size: 16px; -fx-text-fill: #C71585; -fx-font-weight: bold;"/>
+                <ListView fx:id="reservationList" prefHeight="150" style="-fx-background-color: white; -fx-border-color: #E6E6FA; -fx-border-width: 1;"/>
+                
+                <!-- Buttons for reservation actions -->
+                <HBox spacing="10" alignment="CENTER_RIGHT" style="-fx-padding: 10 0 0 0;">
+                    <Button text="View Details" onAction="#handleViewReservation" 
+                            style="-fx-background-color: #D8BFD8; -fx-text-fill: #C71585; -fx-font-weight: bold;"/>
+                    <Button text="Close" onAction="#handleClose" 
+                            style="-fx-background-color: #D8BFD8; -fx-text-fill: #C71585; -fx-font-weight: bold;"/>
+                </HBox>
+            </VBox>
+            <!-- QR Code Image for selected reservation -->
+            <ImageView fx:id="calendarQrCodeImageView" fitWidth="150" fitHeight="150" preserveRatio="true" visible="false"/>
+        </VBox>
+    </HBox>
+</VBox>

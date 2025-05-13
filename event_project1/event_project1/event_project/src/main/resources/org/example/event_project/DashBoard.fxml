@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Text?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.geometry.Pos?>
+
+<AnchorPane xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
+            fx:controller="org.example.event_project.Controllers.DashBoardController"
+            style="-fx-background-color: linear-gradient(to bottom right, #4b2a82, #bd4089);"
+            prefWidth="400" prefHeight="300">
+
+    <!-- VBox pour organiser les éléments avec un peu d'espace -->
+    <VBox spacing="25" alignment="CENTER" AnchorPane.topAnchor="50.0" AnchorPane.rightAnchor="20.0" AnchorPane.leftAnchor="20.0">
+
+        <!-- Titre "Tableau de Bord" centré et en blanc -->
+        <Text text="Tableau de Bord" style="-fx-font-size: 36px; -fx-font-weight: bold; -fx-text-fill: white;"/>
+
+        <!-- Bouton "Gestion Invitations" avec un joli design -->
+        <Button fx:id="btnInvitation" text="Gestion Invitations"
+                prefWidth="180" style="-fx-background-color: linear-gradient(to right, #673ab7, #9c27b0);
+                                       -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 5;
+                                       -fx-font-size: 16px; -fx-effect: dropshadow(gaussian, #000000, 10, 0, 0, 3);"
+                onAction="#goToInvitation"/>
+
+        <!-- Bouton "Gestion Invité(e)s" avec un joli design -->
+        <Button fx:id="btnInvitee" text="Gestion Invité(e)s"
+                prefWidth="180" style="-fx-background-color: linear-gradient(to right, #673ab7, #9c27b0);
+                                       -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 5;
+                                       -fx-font-size: 16px; -fx-effect: dropshadow(gaussian, #000000, 10, 0, 0, 3);"
+                onAction="#goToInvitee"/>
+
+    </VBox>
+</AnchorPane>

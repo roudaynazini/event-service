@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.image.ImageView?>
+
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="org.example.event_project.ContractDialogController"
+      spacing="10"
+      style="-fx-background-color: #FFF0F5;">
+    <padding>
+        <Insets top="20" right="20" bottom="20" left="20"/>
+    </padding>
+
+    <!-- Title -->
+    <Label text="Contract Details" style="-fx-font-size: 18px; -fx-text-fill: #C71585; -fx-font-weight: bold;"/>
+
+    <GridPane hgap="10" vgap="10" style="-fx-background-color: white; -fx-padding: 15; -fx-background-radius: 5; -fx-border-color: #9370DB; -fx-border-radius: 5;">
+        <Label text="Reservation:" GridPane.columnIndex="0" GridPane.rowIndex="0" style="-fx-text-fill: #C71585;"/>
+        <ComboBox fx:id="reservationComboBox" GridPane.columnIndex="1" GridPane.rowIndex="0" GridPane.hgrow="ALWAYS" 
+                  style="-fx-background-color: #9370DB; -fx-text-fill: #C71585;"/>
+        
+        <Label text="Contract Number:" GridPane.columnIndex="0" GridPane.rowIndex="1" style="-fx-text-fill: #C71585;"/>
+        <TextField fx:id="contractNumberField" GridPane.columnIndex="1" GridPane.rowIndex="1" GridPane.hgrow="ALWAYS"
+                  style="-fx-background-color: #9370DB; -fx-text-fill: #C71585;"/>
+        
+        <Label text="Contract Type:" GridPane.columnIndex="0" GridPane.rowIndex="2" style="-fx-text-fill: #C71585;"/>
+        <ComboBox fx:id="contractTypeComboBox" GridPane.columnIndex="1" GridPane.rowIndex="2" GridPane.hgrow="ALWAYS"
+                  style="-fx-background-color: #9370DB; -fx-text-fill: #C71585;"/>
+        
+        <Label text="Status:" GridPane.columnIndex="0" GridPane.rowIndex="3" style="-fx-text-fill: #C71585;"/>
+        <ComboBox fx:id="statusComboBox" GridPane.columnIndex="1" GridPane.rowIndex="3" GridPane.hgrow="ALWAYS"
+                  style="-fx-background-color: #9370DB; -fx-text-fill: #C71585;"/>
+        
+        <Label text="Start Date:" GridPane.columnIndex="0" GridPane.rowIndex="4" style="-fx-text-fill: #C71585;"/>
+        <DatePicker fx:id="startDatePicker" GridPane.columnIndex="1" GridPane.rowIndex="4" GridPane.hgrow="ALWAYS"
+                   style="-fx-background-color: #9370DB; -fx-text-fill: #C71585;"/>
+        
+        <Label text="End Date:" GridPane.columnIndex="0" GridPane.rowIndex="5" style="-fx-text-fill: #C71585;"/>
+        <DatePicker fx:id="endDatePicker" GridPane.columnIndex="1" GridPane.rowIndex="5" GridPane.hgrow="ALWAYS"
+                   style="-fx-background-color: #9370DB; -fx-text-fill: #C71585;"/>
+
+        <Label text="Total Amount:" GridPane.columnIndex="0" GridPane.rowIndex="6" style="-fx-text-fill: #C71585;"/>
+        <TextField fx:id="totalAmountField" GridPane.columnIndex="1" GridPane.rowIndex="6" GridPane.hgrow="ALWAYS"
+                  style="-fx-background-color: #9370DB; -fx-text-fill: #C71585;"/>
+
+        <Label text="Notes:" GridPane.columnIndex="0" GridPane.rowIndex="7" style="-fx-text-fill: #C71585;"/>
+        <TextArea fx:id="notesArea" GridPane.columnIndex="1" GridPane.rowIndex="7" GridPane.hgrow="ALWAYS"
+                  style="-fx-control-inner-background: #9775d1; -fx-text-fill: #C71585;" wrapText="true"/>
+
+        <!-- QR Code Display (hidden by default) -->
+        <Label text="Contract QR Code:" GridPane.columnIndex="0" GridPane.rowIndex="8" style="-fx-text-fill: #C71585;" fx:id="qrCodeLabel" visible="false"/>
+        <ImageView fx:id="qrCodeImageView" GridPane.columnIndex="1" GridPane.rowIndex="8" fitWidth="150" fitHeight="150" preserveRatio="true" visible="false"/>
+
+        <!-- Show QR Code and Export to PDF Buttons -->
+        <HBox spacing="10" GridPane.columnSpan="2" GridPane.rowIndex="9">
+            <Button fx:id="showQrButton" text="Show QR Code" onAction="#handleShowQrCode" style="-fx-background-color: #D8BFD8; -fx-text-fill: #C71585; -fx-font-weight: bold;"/>
+            <Button fx:id="exportPdfButton" text="Export to PDF" onAction="#handleExportToPdf" style="-fx-background-color: #D8BFD8; -fx-text-fill: #C71585; -fx-font-weight: bold;"/>
+        </HBox>
+    </GridPane>
+
+    <HBox spacing="10" alignment="CENTER_RIGHT" style="-fx-padding: 10;">
+        <Button text="Save" onAction="#handleOk" defaultButton="true" 
+                style="-fx-background-color: #D8BFD8; -fx-text-fill: #C71585; -fx-font-weight: bold;"/>
+        <Button text="Cancel" onAction="#handleCancel" cancelButton="true"
+                style="-fx-background-color: #D8BFD8; -fx-text-fill: #C71585; -fx-font-weight: bold;"/>
+    </HBox>
+</VBox>

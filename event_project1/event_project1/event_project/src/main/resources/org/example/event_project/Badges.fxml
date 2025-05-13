@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ProgressBar?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox prefHeight="525.0" prefWidth="924.0" styleClass="container" stylesheets="@sty.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.event_project.Controllers.BadgeController">
+    <!-- Titre centré et en gras -->
+    <Label styleClass="titleLabel" text="🎖️ Votre Tableau de Badges" />
+
+    <!-- Barres de progression des badges -->
+    <HBox spacing="20" styleClass="progressBarContainer">
+        <Label styleClass="progressLabel" text="Progrès des Badges:" />
+        <ProgressBar fx:id="progressBar" prefWidth="300" styleClass="progressBar" />
+    </HBox>
+
+    <!-- TableView pour afficher les badges -->
+    <TableView fx:id="badgeTable" styleClass="badgeTable">
+        <columns>
+            <!-- Colonne ID de l'utilisateur -->
+            <TableColumn fx:id="userIdColumn" prefWidth="96.0" text="ID Utilisateur" />
+
+            <!-- Autres colonnes -->
+            <TableColumn fx:id="nameColumn" prefWidth="83.0" text="Nom" />
+            <TableColumn fx:id="descriptionColumn" prefWidth="359.0" text="Description" />
+            <TableColumn fx:id="badgeEmojiColumn" prefWidth="52.0" text="Emoji" />
+            <TableColumn fx:id="critereColumn" prefWidth="213.0" text="Critère" />
+            <TableColumn fx:id="dateColumn" prefWidth="114.0" text="Attribué le" />
+        </columns>
+    </TableView>
+
+    <!-- Container pour afficher des badges sous forme d'icônes -->
+    <HBox spacing="20" styleClass="iconBadgeContainer">
+        <StackPane fx:id="badgeIcon1" styleClass="badgeIcon">
+            <ImageView fx:id="badgeIconImage1" fitHeight="60" fitWidth="60" />
+        </StackPane>
+        <StackPane fx:id="badgeIcon2" styleClass="badgeIcon">
+            <ImageView fx:id="badgeIconImage2" fitHeight="60" fitWidth="60" />
+        </StackPane>
+
+        <!-- Message de félicitations -->
+        <Label fx:id="congratulationsMessage" styleClass="congratulationsMessage" text="Félicitations! Vous avez débloqué un nouveau badge!" />
+    </HBox>
+</VBox>

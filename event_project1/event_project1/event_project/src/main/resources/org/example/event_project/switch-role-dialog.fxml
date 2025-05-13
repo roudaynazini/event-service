@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="org.example.event_project.SwitchRoleDialogController"
+      spacing="10"
+      style="-fx-background-color: #FFF0F5; -fx-padding: 20;">
+    
+    <padding>
+        <Insets top="20" right="20" bottom="20" left="20"/>
+    </padding>
+
+    <Label text="Switch Role" style="-fx-font-size: 24px; -fx-text-fill: #C71585; -fx-font-weight: bold;"/>
+    
+    <Label text="Current Role:" style="-fx-text-fill: #C71585;"/>
+    <Label fx:id="currentRoleLabel" style="-fx-text-fill: #C71585; -fx-font-weight: bold;"/>
+    
+    <Label text="New Role:" style="-fx-text-fill: #C71585;"/>
+    <ComboBox fx:id="roleComboBox" style="-fx-background-color: #9370DB; -fx-text-fill: #C71585;"/>
+    
+    <HBox spacing="10" alignment="CENTER_RIGHT">
+        <Button text="Switch" onAction="#handleSwitch" style="-fx-background-color: #D8BFD8; -fx-text-fill: #C71585; -fx-font-weight: bold;"/>
+        <Button text="Cancel" onAction="#handleCancel" style="-fx-background-color: #D8BFD8; -fx-text-fill: #C71585; -fx-font-weight: bold;"/>
+    </HBox>
+</VBox> 

@@ -1,0 +1,54 @@
+/* Thème Mauve Lilas */
+
+/* Couleur de fond générale */
+.root {
+    -fx-background-color: #E6E6FA; /* Lilas très clair */
+    -fx-padding: 20px; /* Espace autour de la fenêtre */
+}
+
+/* Style de la VBox (menu de navigation) */
+.VBox {
+    -fx-background-color: #D8BFD8; /* Thistle (lilas pâle) */
+    -fx-padding: 20px;
+    -fx-spacing: 10px;
+    -fx-alignment: center;
+    -fx-border-radius: 10px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.15), 10, 0, 0, 5);
+    -fx-margin: 20px; /* Ajout de marge autour de la VBox */
+}
+
+/* Style des boutons */
+.Button {
+    -fx-background-color: #9370DB; /* Medium Purple */
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+    -fx-padding: 10px 20px;
+    -fx-border-radius: 5px;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 10, 0, 0, 5);
+    -fx-margin: 10px; /* Ajout de marge entre les boutons */
+}
+
+.Button:hover {
+    -fx-background-color: #7B68EE; /* Slate Blue */
+}
+
+/* Zone de contenu principale */
+.StackPane {
+    -fx-background-color: #FFFFFF; /* Blanc pour contraster avec le fond */
+    -fx-padding: 20px;
+    -fx-border-radius: 10px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.1), 10, 0, 0, 5);
+    -fx-margin: 20px; /* Espace autour du contenu */
+}
+
+/* Texte */
+.Text {
+    -fx-fill: #6A5ACD; /* Slate Blue pour le texte */
+    -fx-font-size: 18px;
+    -fx-font-family: "Arial", sans-serif;
+    -fx-margin: 10px; /* Espace autour du texte */
+}
+
+/* Ajout de marges pour le fichier FXML */
+
