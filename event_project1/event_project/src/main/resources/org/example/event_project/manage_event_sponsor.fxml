@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.String?>
+<?import javafx.collections.FXCollections?>
+<?import javafx.scene.chart.BarChart?>
+<?import javafx.scene.chart.CategoryAxis?>
+<?import javafx.scene.chart.NumberAxis?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.Tooltip?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Text?>
+
+<AnchorPane prefHeight="600.0" prefWidth="917.0" style="-fx-background-color: #e6d6ff;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.event_project.Controllers.ManageEventSponsor">
+    <children>
+        <Text layoutX="280.0" layoutY="30.0" style="-fx-font-size: 24px; -fx-font-weight: bold;" text="Manage Event Sponsors" />
+
+        <Button fx:id="button_create" layoutX="40.0" layoutY="413.0" mnemonicParsing="false" onAction="#addEventSponsor" prefHeight="40.0" prefWidth="80.0" style="-fx-background-color: #ff99ff; -fx-text-fill: white; -fx-background-radius: 8; -fx-font-size: 14px;" text="Create">
+            <tooltip><Tooltip text="Create a new event sponsor" /></tooltip>
+        </Button>
+
+        <Button fx:id="button_delete" layoutX="139.0" layoutY="413.0" mnemonicParsing="false" onAction="#deleteEventSponsor" prefHeight="40.0" prefWidth="80.0" style="-fx-background-color: #ff99ff; -fx-text-fill: white; -fx-background-radius: 8; -fx-font-size: 14px;" text="Delete">
+            <tooltip><Tooltip text="Delete selected event sponsor" /></tooltip>
+        </Button>
+
+        <Button fx:id="button_update" layoutX="231.0" layoutY="413.0" mnemonicParsing="false" onAction="#updateEventSponsor" prefHeight="40.0" prefWidth="80.0" style="-fx-background-color: #ff99ff; -fx-text-fill: white; -fx-background-radius: 8; -fx-font-size: 14px;" text="Update">
+            <tooltip><Tooltip text="Update selected event sponsor" /></tooltip>
+        </Button>
+
+        <Button fx:id="button_search" layoutX="318.0" layoutY="413.0" mnemonicParsing="false" onAction="#searchEventSponsor" prefHeight="40.0" prefWidth="80.0" style="-fx-background-color: #ff99ff; -fx-text-fill: white; -fx-background-radius: 8; -fx-font-size: 14px;" text="Search">
+            <tooltip><Tooltip text="Search event sponsors" /></tooltip>
+        </Button>
+
+        <Button fx:id="button_report" layoutX="14.0" layoutY="530.0" mnemonicParsing="false" onAction="#generateSponsorReport" prefHeight="40.0" prefWidth="148.0" style="-fx-background-color: #ff99ff; -fx-text-fill: white; -fx-background-radius: 8; -fx-font-size: 14px;" text="Generate Report">
+            <tooltip><Tooltip text="Generate sponsor report by level" /></tooltip>
+        </Button>
+
+        <Text layoutX="40.0" layoutY="121.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-size: 14px; -fx-font-weight: bold;" text="Event ID" />
+        <Text layoutX="40.0" layoutY="173.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-size: 14px; -fx-font-weight: bold;" text="Sponsor ID" />
+        <Text layoutX="35.0" layoutY="215.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-size: 14px; -fx-font-weight: bold;" text="Sponsorship Level" />
+
+        <TextField fx:id="textfield_eventId" layoutX="139.0" layoutY="103.0" prefWidth="250.0" promptText="Enter Event ID" style="-fx-background-radius: 10; -fx-padding: 5; -fx-background-color: white; -fx-border-color: #cccccc; -fx-border-radius: 10; -fx-border-width: 1;">
+            <tooltip><Tooltip text="Enter event ID" /></tooltip>
+        </TextField>
+
+        <TextField fx:id="textfield_sponsorId" layoutX="139.0" layoutY="156.0" prefWidth="250.0" promptText="Enter Sponsor ID" style="-fx-background-radius: 10; -fx-padding: 5; -fx-background-color: white; -fx-border-color: #cccccc; -fx-border-radius: 10; -fx-border-width: 1;">
+            <tooltip><Tooltip text="Enter sponsor ID" /></tooltip>
+        </TextField>
+
+        <ComboBox fx:id="combobox_sponsorshipLevel" layoutX="139.0" layoutY="227.0" prefHeight="7.0" prefWidth="250.0" style="-fx-background-radius: 10; -fx-padding: 5; -fx-background-color: white; -fx-border-color: #cccccc; -fx-border-radius: 10; -fx-border-width: 1;">
+            <items>
+                <FXCollections fx:factory="observableArrayList">
+                    <String fx:value="Gold" />
+                    <String fx:value="Silver" />
+                    <String fx:value="Bronze" />
+                </FXCollections>
+            </items>
+            <tooltip><Tooltip text="Select sponsorship level" /></tooltip>
+        </ComboBox>
+
+        <Text layoutX="40.0" layoutY="362.0" style="-fx-font-size: 14px; -fx-font-weight: bold;" text="Search Event Sponsors" />
+
+        <TextField fx:id="textfield_search" layoutX="139.0" layoutY="372.0" prefHeight="30.0" prefWidth="250.0" promptText="Search by level" style="-fx-background-radius: 10; -fx-padding: 5; -fx-background-color: white; -fx-border-color: #cccccc; -fx-border-radius: 10; -fx-border-width: 1;">
+            <tooltip><Tooltip text="Search event sponsors by ID" /></tooltip>
+        </TextField>
+
+        <Text layoutX="39.0" layoutY="291.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-size: 14px; -fx-font-weight: bold;" text="Filter by Event ID" />
+        <ComboBox fx:id="eventIdComboBox" layoutX="139.0" layoutY="295.0" prefHeight="7.0" prefWidth="250.0" style="-fx-background-radius: 10; -fx-padding: 5; -fx-background-color: white; -fx-border-color: #cccccc; -fx-border-radius: 10; -fx-border-width: 1;">
+            <tooltip><Tooltip text="Select event ID to filter report" /></tooltip>
+        </ComboBox>
+
+        <TableView fx:id="tableview_eventSponsor" layoutX="420.0" layoutY="53.0" prefHeight="400.0" prefWidth="408.0" style="-fx-background-color: white; -fx-border-color: #cccccc; -fx-border-radius: 10; -fx-border-width: 1; -fx-background-radius: 10;">
+            <columns>
+                <TableColumn fx:id="column_eventId" prefWidth="80.0" text="Event ID" />
+                <TableColumn fx:id="column_sponsorId" prefWidth="80.0" text="Sponsor ID" />
+                <TableColumn fx:id="column_sponsorshipLevel" prefWidth="80.0" text="Sponsorship Level" />
+            </columns>
+        </TableView>
+
+        <BarChart fx:id="reportChart" layoutX="160.0" layoutY="470.0" prefHeight="200.0" prefWidth="750.0">
+            <xAxis>
+                <CategoryAxis />
+            </xAxis>
+            <yAxis>
+                <NumberAxis label="Nombre de sponsors" />
+            </yAxis>
+        </BarChart>
+    </children>
+</AnchorPane>

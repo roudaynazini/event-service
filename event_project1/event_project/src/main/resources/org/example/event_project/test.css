@@ -1,0 +1,66 @@
+/* Arrière-plan général */
+.main-pane {
+    -fx-background-color: linear-gradient(to bottom right, #f7f0ff, #e6d6ff);
+    -fx-font-family: "Segoe UI", sans-serif;
+}
+
+/* Titre principal */
+.text {
+    -fx-font-size: 18px;
+    -fx-fill: #333333;
+}
+
+/* Boutons violets */
+.button {
+    -fx-background-color: #bf7fff;
+    -fx-text-fill: white;
+    -fx-font-weight: normal;
+    -fx-font-size: 15px;
+    -fx-background-radius: 10;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(255, 255, 255, 0.7), 4, 0.3, 2, 2);
+
+}
+.button {
+    -fx-background-color: #bf7fff;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-font-size: 14px;
+    -fx-background-radius: 10;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(255, 255, 255, 0.7), 4, 0.3, 2, 2);
+
+}
+
+
+.button:hover {
+    -fx-background-color: #a456e1;
+}
+
+/* Champs texte */
+.text-field {
+    -fx-background-color: white;
+    -fx-border-color: #bf7fff;
+    -fx-border-width: 1.2;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+    -fx-padding: 6 10;
+}
+
+/* TableView stylée */
+.table-view {
+    -fx-background-color: white;
+    -fx-border-color: #bf7fff;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+    -fx-padding: 10;
+}
+
+.table-column {
+    -fx-alignment: CENTER;
+}
+
+.table-row-cell:filled:selected {
+    -fx-background-color: #e8ccff;
+}
+
