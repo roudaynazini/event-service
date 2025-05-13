@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Rectangle?>
+
+<AnchorPane prefHeight="900" prefWidth="1300" style="-fx-background-color: transparent;" stylesheets="@/resources/css/style.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.controller.ReclamationController">
+
+    <!-- Fond pastel dégradé -->
+    <Rectangle fill="linear-gradient(to bottom right, #f9c1d9, #b9a3f6, #f4d1e8, #e8a5db)" height="900.0" width="1300.0" />
+
+    <!-- Contenu principal -->
+    <VBox layoutX="30" layoutY="30" prefWidth="1240" spacing="25" style="-fx-background-color: rgba(255,255,255,0.75); -fx-padding: 20; -fx-background-radius: 20; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 10, 0, 0, 4);">
+        <!-- Bouton retour -->
+        <HBox alignment="center_left" spacing="10">
+            <Button onAction="#retouracceuil" styleClass="custom-button" text="Retour" />
+        </HBox>
+
+        <!-- Titre -->
+        <Label styleClass="title-label" text="Gestion des Réclamations" />
+
+        <!-- Conteneur principal -->
+        <HBox spacing="30">
+            <!-- Formulaire -->
+            <VBox prefWidth="500" spacing="20">
+                <GridPane hgap="15" vgap="20">
+                    <columnConstraints>
+                        <ColumnConstraints halignment="RIGHT" minWidth="120" />
+                        <ColumnConstraints halignment="LEFT" minWidth="350" />
+                    </columnConstraints>
+
+                    <Label styleClass="form-label" text="ID Utilisateur:" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+                    <TextField fx:id="tfIdUtilisateur" promptText="ID Utilisateur" styleClass="input-field" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+
+                    <Label styleClass="form-label" text="ID Événement:" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+                    <TextField fx:id="tfIdEvenement" promptText="ID Événement" styleClass="input-field" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+
+                    <Label styleClass="form-label" text="Description:" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+                    <TextArea fx:id="tfDescription" prefHeight="250.0" prefWidth="500.0" promptText="Décris clairement ta réclamation..." styleClass="input-field" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+
+                    <Label styleClass="form-label" text="État:" GridPane.columnIndex="0" GridPane.rowIndex="3" />
+                    <ComboBox fx:id="cbEtat" promptText="Sélectionner un état" styleClass="input-field" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+
+                    <Label styleClass="form-label" text="Date Réclamation:" GridPane.columnIndex="0" GridPane.rowIndex="4" />
+                    <DatePicker fx:id="dpDateReclamation" styleClass="input-field" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+               <rowConstraints>
+                  <RowConstraints />
+                  <RowConstraints />
+                  <RowConstraints />
+                  <RowConstraints />
+                  <RowConstraints />
+               </rowConstraints>
+                </GridPane>
+
+                <!-- Boutons CRUD -->
+                <HBox alignment="center" spacing="15">
+                    <Button onAction="#supprimerReclamation" styleClass="custom-button" text="Supprimer" />
+                    <Button onAction="#ajouterReclamation" styleClass="custom-button" text="Ajouter" />
+                    <Button onAction="#modifierReclamation" styleClass="custom-button" text="Modifier" />
+                    <Button onAction="#reinitialiserChamps" styleClass="custom-button" text="Réinitialiser" />
+                     </HBox>
+            </VBox>
+
+            <!-- Tableau avec champ recherche en haut -->
+            <VBox prefWidth="700" spacing="10">
+                <!-- Recherche en haut à droite -->
+                <HBox alignment="TOP_RIGHT" spacing="10">
+                    <TextField fx:id="tf_search" prefWidth="300" promptText="Rechercher par État" styleClass="input-field" />
+                    <Button onAction="#searchReclamation" styleClass="custom-button" text="Rechercher" />
+                </HBox>
+
+                <!-- Tableau -->
+                <TableView fx:id="tableReclamation" onMouseClicked="#onRowClick" prefHeight="500" styleClass="custom-table">
+                    <columns>
+                        <TableColumn fx:id="columnIdReclamation" prefWidth="100" text="ID Réclamation" />
+                        <TableColumn fx:id="columnIdUtilisateur" prefWidth="100" text="ID Utilisateur" />
+                        <TableColumn fx:id="columnIdEvenement" prefWidth="100" text="ID Événement" />
+                        <TableColumn fx:id="columnDescription" prefWidth="250" text="Description" />
+                        <TableColumn fx:id="columnEtat" prefWidth="100" text="État" />
+                        <TableColumn fx:id="columnDate" prefWidth="100" text="Date" />
+                    </columns>
+                </TableView>
+
+                <!-- Bas: Boutons PDF et navigation -->
+                <HBox alignment="BOTTOM_RIGHT" spacing="10">
+                    <Button fx:id="btnDownloadPdf" onAction="#handleDownloadPdf" styleClass="custom-button" text="Télécharger PDF" />
+                    <Button onAction="#passerAavis" styleClass="custom-button" text="Passer à Avis" />
+                    <Button onAction="#ouvrirStatistiques" styleClass="custom-button" text="Statistiques" />
+                </HBox>
+            </VBox>
+        </HBox>
+    </VBox>
+</AnchorPane>

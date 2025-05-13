@@ -1,0 +1,82 @@
+/* Styles globaux pour les boutons */
+.button-style {
+    -fx-background-color: linear-gradient(to bottom, #D8A7F5, #9B3DA0);
+    -fx-text-fill: white;
+    -fx-padding: 10px 20px; /* Augmenter les espacements internes pour agrandir le bouton */
+    -fx-font-size: 16px; /* Agrandir la taille de la police */
+    -fx-border-radius: 12px; /* Arrondir les coins */
+    -fx-min-width: 200px; /* Largeur minimale du bouton */
+    -fx-max-width: 250px; /* Largeur maximale du bouton */
+}
+
+/* Effet hover sur les boutons */
+.button-style:hover {
+    -fx-background-color: linear-gradient(to bottom, #9B3DA0, #D8A7F5);
+}
+
+/* Styles pour le menu latéral */
+.vbox-sidebar {
+    -fx-background-color: linear-gradient(to bottom, #8e44ad, #c39bd3);
+    -fx-padding: 30;
+    -fx-background-radius: 0 10 10 0;
+    -fx-spacing: 25;
+    -fx-alignment: top-center;
+}
+
+/* Styles pour les boutons du menu latéral */
+.sidebar-button {
+    -fx-background-color: linear-gradient(to bottom, #D8A7F5, #9B3DA0);
+    -fx-text-fill: white;
+    -fx-padding: 10px 20px; /* Augmenter les espacements internes pour agrandir le bouton */
+    -fx-font-size: 16px; /* Agrandir la taille de la police */
+    -fx-border-radius: 12px; /* Arrondir les coins */
+    -fx-min-width: 200px; /* Largeur minimale du bouton */
+    -fx-max-width: 250px; /* Largeur maximale du bouton */
+}
+
+/* Effet hover sur les boutons du menu */
+.sidebar-button:hover {
+    -fx-background-color: linear-gradient(to bottom, #9B3DA0, #D8A7F5);
+}
+
+/* Ajout d'un effet de survol supplémentaire pour les boutons du menu */
+.sidebar-button:pressed {
+    -fx-background-color: linear-gradient(to bottom, #9B3DA0, #D8A7F5);
+    -fx-opacity: 0.8;
+}
+
+/* Style des éléments textuels dans le menu latéral */
+.vbox-sidebar .label-title {
+    -fx-font-size: 22px;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+}
+
+/* Style des éléments de recherche */
+.textfield-search, .textfield-form {
+    -fx-background-color: #f8f9fd;
+    -fx-text-fill: #1a1a1a;
+    -fx-border-radius: 8px;
+    -fx-padding: 12px 20px; /* Augmenter le padding pour plus d'espace */
+}
+
+/* Style des labels dans le formulaire */
+.label-form {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #1a1a1a;
+}
+
+/* Styles pour les tableaux */
+.table-view {
+    -fx-background-color: #ffffff;
+    -fx-text-fill: #1a1a1a;
+    -fx-border-radius: 10px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.1), 5, 0, 0, 10);
+}
+
+.table-view .column-header {
+    -fx-font-weight: bold;
+    -fx-font-size: 14px;
+    -fx-background-color: #f1f1f1;
+}
