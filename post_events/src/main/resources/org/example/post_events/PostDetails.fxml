@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<BorderPane xmlns:fx="http://javafx.com/fxml" fx:controller="org.example.post_events.controllers.PostDetailController">
+
+    <top>
+        <Label fx:id="descriptionLabel" text="Détails du Post" style="-fx-font-size: 18px;" />
+    </top>
+
+    <center>
+        <VBox spacing="10">
+            <TableView fx:id="postTableView" prefHeight="200.0">
+                <columns>
+                    <TableColumn fx:id="descriptionColumn" text="Description" prefWidth="200.0"/>
+                    <TableColumn fx:id="commentaireColumn" text="Commentaires" prefWidth="300.0"/>
+                </columns>
+            </TableView>
+
+            <Label text="Contenu du post :" />
+            <TextArea fx:id="contentTextArea" prefRowCount="5" wrapText="true" editable="false"/>
+        </VBox>
+    </center>
+
+    <bottom>
+        <HBox alignment="CENTER_RIGHT">
+            <Button text="Fermer" onAction="#handleBack" />
+        </HBox>
+    </bottom>
+
+</BorderPane>

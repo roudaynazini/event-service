@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane prefHeight="600" prefWidth="917" style="-fx-background-color: #EDE7F6;" stylesheets="@Menu-style.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.post_events.controllers.MenuController">
+
+    <Label fx:id="welcomeLabel" layoutX="203.0" layoutY="47.0" styleClass="welcome-text" text="Bienvenue dans votre espace média" textFill="#9311a6" />
+
+    <Button fx:id="btnBadges" layoutX="214.0" layoutY="416.0" onAction="#handleShowBadges" text="🎖 Mes Badges" />
+
+
+    <Button fx:id="postBtn" layoutX="329.0" layoutY="164.0" onAction="#handlePosts" prefHeight="50" prefWidth="200" text="Gérer les Posts" />
+
+    <Button fx:id="commentBtn" layoutX="336.0" layoutY="256.0" onAction="#handleCommentaires" prefHeight="50" prefWidth="200" text="Gérer les Commentaires" />
+
+    <Button fx:id="btnStatistque" layoutX="445.0" layoutY="413.0" onAction="#Statistique" prefHeight="41.0" prefWidth="141.0" text="📝 statistiques" />
+   <Label fx:id="welcomeLabel1" layoutX="226.0" layoutY="325.0" styleClass="welcome-text" text="Consulter vos activités" textFill="#9311a6" />
+   <ImageView fitHeight="103.0" fitWidth="163.0" layoutX="25.0" layoutY="22.0" pickOnBounds="true" preserveRatio="true">
+      <image>
+         <Image url="@image/aa.png" />
+      </image>
+   </ImageView>
+
+
+</AnchorPane>
